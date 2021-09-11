@@ -14,13 +14,13 @@ const (
 var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 
 type Scale struct {
-	root      Note
+	root      note
 	scaleType string
-	notes     []Note
+	notes     []note
 }
 
 func NewScale(rootNote string, scaleType string) (Scale, error) {
-	root, err := NewNote(rootNote)
+	root, err := newNote(rootNote)
 	if err != nil {
 		return Scale{}, err
 	}
@@ -46,7 +46,7 @@ func (s Scale) String() string {
 	return strings.TrimSpace(sb.String())
 }
 
-func buildMinorScale(root Note) Scale {
+func buildMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
 		scaleType: NaturalMinor,
@@ -54,7 +54,7 @@ func buildMinorScale(root Note) Scale {
 	}
 }
 
-func buildMajorScale(root Note) Scale {
+func buildMajorScale(root note) Scale {
 	return Scale{
 		root:      root,
 		scaleType: Major,
@@ -62,7 +62,7 @@ func buildMajorScale(root Note) Scale {
 	}
 }
 
-func buildHarmonicMinorScale(root Note) Scale {
+func buildHarmonicMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
 		scaleType: Major,
@@ -70,31 +70,31 @@ func buildHarmonicMinorScale(root Note) Scale {
 	}
 }
 
-func buildScale(root Note, intervals ...uint) []Note {
-	notes := make([]Note, len(intervals)+1)
+func buildScale(root note, intervals ...uint) []note {
+	notes := make([]note, len(intervals)+1)
 	notes[0] = root
 	for i, interval := range intervals {
-		notes[i+1] = root.Add(interval)
+		notes[i+1] = root.add(interval)
 	}
 
 	return notes
 }
 
-type Note struct {
+type note struct {
 	value string
 }
 
-func NewNote(note string) (Note, error) {
+func newNote(value string) (note, error) {
 	for _, n := range notes {
-		if note == n {
-			return Note{value: n}, nil
+		if value == n {
+			return note{value: n}, nil
 		}
 	}
 
-	return Note{}, fmt.Errorf("note does not exist: %s", note)
+	return note{}, fmt.Errorf("note does not exist: %s", value)
 }
 
-func (n Note) Add(halfsteps uint) Note {
+func (n note) add(halfsteps uint) note {
 	if halfsteps == 0 || halfsteps%12 == 0 {
 		return n
 	}
@@ -112,9 +112,9 @@ func (n Note) Add(halfsteps uint) Note {
 		nextNoteIndex -= 12
 	}
 
-	return Note{value: notes[nextNoteIndex]}
+	return note{value: notes[nextNoteIndex]}
 }
 
-func (n Note) String() string {
+func (n note) String() string {
 	return n.value
 }

@@ -39,15 +39,15 @@ func TestNewScale(t *testing.T) {
 }
 
 func TestNewNote(t *testing.T) {
-	t.Run("return Note struct with correct value", func(t *testing.T) {
-		n, err := NewNote("A")
+	t.Run("return note struct with correct value", func(t *testing.T) {
+		n, err := newNote("A")
 
 		assert.NoError(t, err)
 		assert.Equal(t, "A", n.String())
 	})
 
 	t.Run("return error when note does not exist", func(t *testing.T) {
-		_, err := NewNote("M")
+		_, err := newNote("M")
 		assert.Error(t, err)
 	})
 }
@@ -70,8 +70,8 @@ func TestNote_Add(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			start := Note{value: tt.StartNote}
-			result := start.Add(tt.Halfsteps)
+			start := note{value: tt.StartNote}
+			result := start.add(tt.Halfsteps)
 
 			assert.Equal(t, tt.ExpectedNote, result.String())
 		})
