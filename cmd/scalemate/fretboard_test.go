@@ -32,6 +32,13 @@ func TestFretboard_Fret(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "A", note.String())
 	})
+
+	t.Run("return correct note and error if note is not in the fretboards scale", func(t *testing.T) {
+		note, err := fretboard.Fret(6, 1)
+
+		assert.Error(t, err)
+		assert.Equal(t, "F", note.String())
+	})
 }
 
 func TestNewFretboard(t *testing.T) {
