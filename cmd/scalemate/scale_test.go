@@ -66,6 +66,7 @@ func TestNote_Add(t *testing.T) {
 		{Name: "add 13 halfsteps from A", StartNote: "A", Halfsteps: 13, ExpectedNote: "A#"},
 		{Name: "add 1 halfstep from E", StartNote: "E", Halfsteps: 1, ExpectedNote: "F"},
 		{Name: "add 5 halfsteps from E", StartNote: "E", Halfsteps: 5, ExpectedNote: "A"},
+		{Name: "add 22 halfsteps from E", StartNote: "E", Halfsteps: 22, ExpectedNote: "D"},
 	}
 
 	for _, tt := range tests {

@@ -109,7 +109,7 @@ func (n note) add(halfsteps uint) note {
 
 	nextNoteIndex := currentNoteIndex + halfsteps
 	if int(nextNoteIndex) > 11 {
-		nextNoteIndex -= 12
+		nextNoteIndex = nextNoteIndex % 12
 	}
 
 	return note{value: notes[nextNoteIndex]}
