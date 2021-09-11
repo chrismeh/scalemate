@@ -37,6 +37,15 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	}
 }
 
+func (s Scale) Contains(note Note) bool {
+	for _, n := range s.notes {
+		if note == n {
+			return true
+		}
+	}
+	return false
+}
+
 func (s Scale) String() string {
 	var sb strings.Builder
 	for _, n := range s.notes {
