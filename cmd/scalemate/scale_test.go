@@ -22,6 +22,13 @@ func TestNewScale(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "A B C D E F G", scale.String())
 	})
+
+	t.Run("build correct major scale", func(t *testing.T) {
+		scale, err := NewScale("C", Major)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "C D E F G A B", scale.String())
+	})
 }
 
 func TestNewNote(t *testing.T) {
