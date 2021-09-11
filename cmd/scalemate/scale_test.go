@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func TestNewNote(t *testing.T) {
+	t.Run("return Note struct with correct value", func(t *testing.T) {
+		n, err := NewNote("A")
+
+		assert.NoError(t, err)
+		assert.Equal(t, "A", n.String())
+	})
+
+	t.Run("return error when note does not exist", func(t *testing.T) {
+		_, err := NewNote("M")
+		assert.Error(t, err)
+	})
+}
+
 func TestNote_Add(t *testing.T) {
 	tests := []struct {
 		Name         string

@@ -1,9 +1,23 @@
 package main
 
+import (
+	"fmt"
+)
+
 var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 
 type Note struct {
 	value string
+}
+
+func NewNote(note string) (Note, error) {
+	for _, n := range notes {
+		if note == n {
+			return Note{value: n}, nil
+		}
+	}
+
+	return Note{}, fmt.Errorf("note does not exist: %s", note)
 }
 
 func (n Note) Add(halfsteps uint) Note {
