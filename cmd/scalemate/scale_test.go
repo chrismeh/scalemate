@@ -5,6 +5,25 @@ import (
 	"testing"
 )
 
+func TestNewScale(t *testing.T) {
+	t.Run("return error when note does not exist", func(t *testing.T) {
+		_, err := NewScale("M", NaturalMinor)
+		assert.Error(t, err)
+	})
+
+	t.Run("return error when scale type is unknown", func(t *testing.T) {
+		_, err := NewScale("A", "Foo")
+		assert.Error(t, err)
+	})
+
+	t.Run("build correct natural minor scale", func(t *testing.T) {
+		scale, err := NewScale("A", NaturalMinor)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "A B C D E F G", scale.String())
+	})
+}
+
 func TestNewNote(t *testing.T) {
 	t.Run("return Note struct with correct value", func(t *testing.T) {
 		n, err := NewNote("A")

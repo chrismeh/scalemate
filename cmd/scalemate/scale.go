@@ -2,9 +2,53 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
+const NaturalMinor string = "natural minor"
+
 var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
+
+type Scale struct {
+	root      Note
+	scaleType string
+	notes     []Note
+}
+
+func NewScale(rootNote string, scaleType string) (Scale, error) {
+	root, err := NewNote(rootNote)
+	if err != nil {
+		return Scale{}, err
+	}
+
+	switch scaleType {
+	case NaturalMinor:
+		return buildNaturalMinorScale(root), nil
+	default:
+		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
+	}
+}
+
+func (s Scale) String() string {
+	var sb strings.Builder
+	for _, n := range s.notes {
+		sb.WriteString(n.String() + " ")
+	}
+
+	return strings.TrimSpace(sb.String())
+}
+
+func buildNaturalMinorScale(root Note) Scale {
+	intervals := []uint{2, 3, 5, 7, 8, 10}
+	notes := make([]Note, len(intervals)+1)
+
+	notes[0] = root
+	for i, interval := range intervals {
+		notes[i+1] = root.Add(interval)
+	}
+
+	return Scale{root: root, scaleType: NaturalMinor, notes: notes}
+}
 
 type Note struct {
 	value string
