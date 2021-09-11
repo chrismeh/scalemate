@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	NaturalMinor string = "natural minor"
-	Major               = "major"
+	NaturalMinor  string = "natural minor"
+	HarmonicMinor        = "harmonic minor"
+	Major                = "major"
 )
 
 var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
@@ -27,6 +28,8 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	switch scaleType {
 	case NaturalMinor:
 		return buildMinorScale(root), nil
+	case HarmonicMinor:
+		return buildHarmonicMinorScale(root), nil
 	case Major:
 		return buildMajorScale(root), nil
 	default:
@@ -56,6 +59,14 @@ func buildMajorScale(root Note) Scale {
 		root:      root,
 		scaleType: Major,
 		notes:     buildScale(root, 2, 4, 5, 7, 9, 11),
+	}
+}
+
+func buildHarmonicMinorScale(root Note) Scale {
+	return Scale{
+		root:      root,
+		scaleType: Major,
+		notes:     buildScale(root, 2, 3, 5, 7, 8, 11),
 	}
 }
 

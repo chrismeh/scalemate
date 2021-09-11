@@ -29,6 +29,13 @@ func TestNewScale(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "C D E F G A B", scale.String())
 	})
+
+	t.Run("build correct harmonic minor scale", func(t *testing.T) {
+		scale, err := NewScale("A", HarmonicMinor)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "A B C D E F G#", scale.String())
+	})
 }
 
 func TestNewNote(t *testing.T) {
