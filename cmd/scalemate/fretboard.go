@@ -5,18 +5,36 @@ import (
 )
 
 type Fretboard struct {
-	tuning  string
+	Tuning  string
+	Frets   uint
 	strings []guitarString
 	scale   Scale
 }
 
-func NewFretboard(tuning string) (*Fretboard, error) {
-	strings, err := buildStringsFromTuning(tuning)
+type FretboardOptions struct {
+	Tuning string
+	Frets  uint
+}
+
+func NewFretboard(options FretboardOptions) (*Fretboard, error) {
+	if options.Tuning == "" {
+		options.Tuning = "EADGBE"
+	}
+	if options.Frets == 0 {
+		options.Frets = 22
+	}
+
+	strings, err := buildStringsFromTuning(options.Tuning)
 	if err != nil {
 		return nil, err
 	}
 
-	f := Fretboard{tuning: tuning, strings: strings, scale: Scale{}}
+	f := Fretboard{
+		Tuning:  options.Tuning,
+		Frets:   options.Frets,
+		strings: strings,
+		scale:   Scale{},
+	}
 	return &f, nil
 }
 
