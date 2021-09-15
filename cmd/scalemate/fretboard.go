@@ -6,6 +6,7 @@ import (
 
 type Fretboard struct {
 	Tuning  string
+	Strings uint
 	Frets   uint
 	strings []guitarString
 	scale   Scale
@@ -31,6 +32,7 @@ func NewFretboard(options FretboardOptions) (*Fretboard, error) {
 
 	f := Fretboard{
 		Tuning:  options.Tuning,
+		Strings: uint(len(strings)),
 		Frets:   options.Frets,
 		strings: strings,
 		scale:   Scale{},

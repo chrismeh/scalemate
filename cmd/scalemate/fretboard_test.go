@@ -61,6 +61,7 @@ func TestNewFretboard(t *testing.T) {
 		fretboard, err := NewFretboard(FretboardOptions{})
 
 		assert.NoError(t, err)
+		assert.Equal(t, uint(6), fretboard.Strings)
 		assert.Equal(t, "E", fretboard.strings[0].root.String())
 		assert.Equal(t, "B", fretboard.strings[1].root.String())
 		assert.Equal(t, "G", fretboard.strings[2].root.String())
