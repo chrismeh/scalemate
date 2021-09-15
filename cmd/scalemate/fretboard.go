@@ -10,17 +10,21 @@ type Fretboard struct {
 	scale   Scale
 }
 
-func NewFretboard(tuning string, scale Scale) (Fretboard, error) {
+func NewFretboard(tuning string) (*Fretboard, error) {
 	strings, err := buildStringsFromTuning(tuning)
 	if err != nil {
-		return Fretboard{}, err
+		return nil, err
 	}
 
-	f := Fretboard{tuning: tuning, strings: strings, scale: scale}
-	return f, nil
+	f := Fretboard{tuning: tuning, strings: strings, scale: Scale{}}
+	return &f, nil
 }
 
-func (f Fretboard) Fret(string, fret uint) (Fret, error) {
+func (f *Fretboard) HighlightScale(s Scale) {
+	f.scale = s
+}
+
+func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 	if string < 1 || int(string) > len(f.strings) {
 		return Fret{}, fmt.Errorf("string %d is invalid", string)
 	}

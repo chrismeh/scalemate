@@ -7,9 +7,10 @@ import (
 
 func TestFretboard_Fret(t *testing.T) {
 	scale, _ := NewScale("A", Major)
-	fretboard, _ := NewFretboard("EADGBE", scale)
 
 	t.Run("return error for an invalid string number", func(t *testing.T) {
+		fretboard, _ := NewFretboard("EADGBE")
+
 		tests := []struct {
 			Name   string
 			String uint
@@ -27,6 +28,8 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return correct fret for specified fret number and tuning", func(t *testing.T) {
+		fretboard, _ := NewFretboard("EADGBE")
+		fretboard.HighlightScale(scale)
 		fret, err := fretboard.Fret(6, 5)
 
 		assert.NoError(t, err)
@@ -36,6 +39,16 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return false for Highlighted if a frets note is not in scale", func(t *testing.T) {
+		fretboard, _ := NewFretboard("EADGBE")
+		fretboard.HighlightScale(scale)
+		fret, err := fretboard.Fret(6, 1)
+
+		assert.NoError(t, err)
+		assert.Equal(t, false, fret.Highlighted)
+	})
+
+	t.Run("return false for Highlighted if the fretboard has no highlighted scale", func(t *testing.T) {
+		fretboard, _ := NewFretboard("EADGBE")
 		fret, err := fretboard.Fret(6, 1)
 
 		assert.NoError(t, err)
@@ -45,15 +58,13 @@ func TestFretboard_Fret(t *testing.T) {
 
 func TestNewFretboard(t *testing.T) {
 	t.Run("return error when tuning contains a non existing note", func(t *testing.T) {
-		scale, _ := NewScale("A", Major)
-		_, err := NewFretboard("ZADGBE", scale)
+		_, err := NewFretboard("ZADGBE")
 
 		assert.Error(t, err)
 	})
 
 	t.Run("parse guitar strings from specified tuning", func(t *testing.T) {
-		scale, _ := NewScale("A", Major)
-		fretboard, err := NewFretboard("EADGBE", scale)
+		fretboard, err := NewFretboard("EADGBE")
 
 		assert.NoError(t, err)
 		assert.Equal(t, "E", fretboard.strings[0].root.String())
