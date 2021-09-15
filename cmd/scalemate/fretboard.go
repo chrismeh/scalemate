@@ -50,13 +50,19 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 	}
 
 	note := f.strings[string-1].fret(fret)
-	return Fret{Number: fret, Note: note, Highlighted: f.scale.Contains(note)}, nil
+	return Fret{
+		Number:      fret,
+		Note:        note,
+		Highlighted: f.scale.Contains(note),
+		Root:        note == f.scale.root,
+	}, nil
 }
 
 type Fret struct {
 	Number      uint
 	Note        Note
 	Highlighted bool
+	Root        bool
 }
 
 type guitarString struct {
