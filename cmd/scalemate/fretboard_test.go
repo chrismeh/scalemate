@@ -26,18 +26,20 @@ func TestFretboard_Fret(t *testing.T) {
 		}
 	})
 
-	t.Run("return correct note for specified fret and tuning", func(t *testing.T) {
-		note, err := fretboard.Fret(6, 5)
+	t.Run("return correct fret for specified fret number and tuning", func(t *testing.T) {
+		fret, err := fretboard.Fret(6, 5)
 
 		assert.NoError(t, err)
-		assert.Equal(t, "A", note.String())
+		assert.Equal(t, uint(5), fret.Number)
+		assert.Equal(t, "A", fret.Note.String())
+		assert.Equal(t, true, fret.Highlighted)
 	})
 
-	t.Run("return correct note and error if note is not in the fretboards scale", func(t *testing.T) {
-		note, err := fretboard.Fret(6, 1)
+	t.Run("return false for Highlighted if a frets note is not in scale", func(t *testing.T) {
+		fret, err := fretboard.Fret(6, 1)
 
-		assert.Error(t, err)
-		assert.Equal(t, "F", note.String())
+		assert.NoError(t, err)
+		assert.Equal(t, false, fret.Highlighted)
 	})
 }
 
