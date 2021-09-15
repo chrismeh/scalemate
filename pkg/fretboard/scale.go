@@ -1,4 +1,4 @@
-package main
+package fretboard
 
 import (
 	"fmt"
@@ -6,38 +6,38 @@ import (
 )
 
 const (
-	NaturalMinor  string = "natural minor"
-	HarmonicMinor        = "harmonic minor"
-	Major                = "major"
+	ScaleNaturalMinor  string = "natural minor"
+	ScaleHarmonicMinor        = "harmonic minor"
+	ScaleMajor                = "major"
 )
 
 var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 
 type Scale struct {
-	root      Note
+	root      note
 	scaleType string
-	notes     []Note
+	notes     []note
 }
 
 func NewScale(rootNote string, scaleType string) (Scale, error) {
-	root, err := NewNote(rootNote)
+	root, err := newNote(rootNote)
 	if err != nil {
 		return Scale{}, err
 	}
 
 	switch scaleType {
-	case NaturalMinor:
+	case ScaleNaturalMinor:
 		return buildMinorScale(root), nil
-	case HarmonicMinor:
+	case ScaleHarmonicMinor:
 		return buildHarmonicMinorScale(root), nil
-	case Major:
+	case ScaleMajor:
 		return buildMajorScale(root), nil
 	default:
 		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
 	}
 }
 
-func (s Scale) Contains(note Note) bool {
+func (s Scale) contains(note note) bool {
 	for _, n := range s.notes {
 		if note == n {
 			return true
@@ -55,32 +55,32 @@ func (s Scale) String() string {
 	return strings.TrimSpace(sb.String())
 }
 
-func buildMinorScale(root Note) Scale {
+func buildMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
-		scaleType: NaturalMinor,
+		scaleType: ScaleNaturalMinor,
 		notes:     buildScale(root, 2, 3, 5, 7, 8, 10),
 	}
 }
 
-func buildMajorScale(root Note) Scale {
+func buildMajorScale(root note) Scale {
 	return Scale{
 		root:      root,
-		scaleType: Major,
+		scaleType: ScaleMajor,
 		notes:     buildScale(root, 2, 4, 5, 7, 9, 11),
 	}
 }
 
-func buildHarmonicMinorScale(root Note) Scale {
+func buildHarmonicMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
-		scaleType: Major,
+		scaleType: ScaleMajor,
 		notes:     buildScale(root, 2, 3, 5, 7, 8, 11),
 	}
 }
 
-func buildScale(root Note, intervals ...uint) []Note {
-	notes := make([]Note, len(intervals)+1)
+func buildScale(root note, intervals ...uint) []note {
+	notes := make([]note, len(intervals)+1)
 	notes[0] = root
 	for i, interval := range intervals {
 		notes[i+1] = root.Add(interval)
@@ -89,21 +89,21 @@ func buildScale(root Note, intervals ...uint) []Note {
 	return notes
 }
 
-type Note struct {
+type note struct {
 	value string
 }
 
-func NewNote(value string) (Note, error) {
+func newNote(value string) (note, error) {
 	for _, n := range notes {
 		if value == n {
-			return Note{value: n}, nil
+			return note{value: n}, nil
 		}
 	}
 
-	return Note{}, fmt.Errorf("note does not exist: %s", value)
+	return note{}, fmt.Errorf("note does not exist: %s", value)
 }
 
-func (n Note) Add(halfsteps uint) Note {
+func (n note) Add(halfsteps uint) note {
 	if halfsteps == 0 || halfsteps%12 == 0 {
 		return n
 	}
@@ -121,9 +121,9 @@ func (n Note) Add(halfsteps uint) Note {
 		nextNoteIndex = nextNoteIndex % 12
 	}
 
-	return Note{value: notes[nextNoteIndex]}
+	return note{value: notes[nextNoteIndex]}
 }
 
-func (n Note) String() string {
+func (n note) String() string {
 	return n.value
 }

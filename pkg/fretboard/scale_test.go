@@ -1,4 +1,4 @@
-package main
+package fretboard
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -7,19 +7,19 @@ import (
 
 func TestScale_Contains(t *testing.T) {
 	t.Run("return true if scale contains note", func(t *testing.T) {
-		scale, _ := NewScale("A", NaturalMinor)
-		assert.True(t, scale.Contains(Note{value: "C"}))
+		scale, _ := NewScale("A", ScaleNaturalMinor)
+		assert.True(t, scale.contains(note{value: "C"}))
 	})
 
 	t.Run("return false if scale does not contain note", func(t *testing.T) {
-		scale, _ := NewScale("A", NaturalMinor)
-		assert.False(t, scale.Contains(Note{value: "C#"}))
+		scale, _ := NewScale("A", ScaleNaturalMinor)
+		assert.False(t, scale.contains(note{value: "C#"}))
 	})
 }
 
 func TestNewScale(t *testing.T) {
 	t.Run("return error when note does not exist", func(t *testing.T) {
-		_, err := NewScale("M", NaturalMinor)
+		_, err := NewScale("M", ScaleNaturalMinor)
 		assert.Error(t, err)
 	})
 
@@ -29,21 +29,21 @@ func TestNewScale(t *testing.T) {
 	})
 
 	t.Run("build correct natural minor scale", func(t *testing.T) {
-		scale, err := NewScale("A", NaturalMinor)
+		scale, err := NewScale("A", ScaleNaturalMinor)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "A B C D E F G", scale.String())
 	})
 
 	t.Run("build correct major scale", func(t *testing.T) {
-		scale, err := NewScale("C", Major)
+		scale, err := NewScale("C", ScaleMajor)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "C D E F G A B", scale.String())
 	})
 
 	t.Run("build correct harmonic minor scale", func(t *testing.T) {
-		scale, err := NewScale("A", HarmonicMinor)
+		scale, err := NewScale("A", ScaleHarmonicMinor)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "A B C D E F G#", scale.String())
@@ -52,14 +52,14 @@ func TestNewScale(t *testing.T) {
 
 func TestNewNote(t *testing.T) {
 	t.Run("return note struct with correct value", func(t *testing.T) {
-		n, err := NewNote("A")
+		n, err := newNote("A")
 
 		assert.NoError(t, err)
 		assert.Equal(t, "A", n.String())
 	})
 
 	t.Run("return error when note does not exist", func(t *testing.T) {
-		_, err := NewNote("M")
+		_, err := newNote("M")
 		assert.Error(t, err)
 	})
 }
@@ -83,7 +83,7 @@ func TestNote_Add(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			start := Note{value: tt.StartNote}
+			start := note{value: tt.StartNote}
 			result := start.Add(tt.Halfsteps)
 
 			assert.Equal(t, tt.ExpectedNote, result.String())

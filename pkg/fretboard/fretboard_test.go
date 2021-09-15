@@ -1,4 +1,4 @@
-package main
+package fretboard
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,10 +6,10 @@ import (
 )
 
 func TestFretboard_Fret(t *testing.T) {
-	scale, _ := NewScale("A", Major)
+	scale, _ := NewScale("A", ScaleMajor)
 
 	t.Run("return error for an invalid string number", func(t *testing.T) {
-		fretboard, _ := NewFretboard(FretboardOptions{Tuning: "EADGBE"})
+		fretboard, _ := New(Options{Tuning: "EADGBE"})
 
 		tests := []struct {
 			Name   string
@@ -28,7 +28,7 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return correct fret for specified fret number and tuning", func(t *testing.T) {
-		fretboard, _ := NewFretboard(FretboardOptions{Tuning: "EADGBE"})
+		fretboard, _ := New(Options{Tuning: "EADGBE"})
 		fretboard.HighlightScale(scale)
 		fret, err := fretboard.Fret(6, 5)
 
@@ -39,7 +39,7 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return false for Highlighted if a frets note is not in scale", func(t *testing.T) {
-		fretboard, _ := NewFretboard(FretboardOptions{Tuning: "EADGBE"})
+		fretboard, _ := New(Options{Tuning: "EADGBE"})
 		fretboard.HighlightScale(scale)
 		fret, err := fretboard.Fret(6, 1)
 
@@ -48,7 +48,7 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return false for Highlighted if the fretboard has no highlighted scale", func(t *testing.T) {
-		fretboard, _ := NewFretboard(FretboardOptions{Tuning: "EADGBE"})
+		fretboard, _ := New(Options{Tuning: "EADGBE"})
 		fret, err := fretboard.Fret(6, 1)
 
 		assert.NoError(t, err)
@@ -56,8 +56,8 @@ func TestFretboard_Fret(t *testing.T) {
 	})
 
 	t.Run("return true is the frets note is the root note of the highlighted scale", func(t *testing.T) {
-		fretboard, _ := NewFretboard(FretboardOptions{Tuning: "EADGBE"})
-		scale, err := NewScale("A", NaturalMinor)
+		fretboard, _ := New(Options{Tuning: "EADGBE"})
+		scale, err := NewScale("A", ScaleNaturalMinor)
 		fretboard.HighlightScale(scale)
 
 		fret, err := fretboard.Fret(6, 5)
@@ -68,8 +68,8 @@ func TestFretboard_Fret(t *testing.T) {
 }
 
 func TestNewFretboard(t *testing.T) {
-	t.Run("use EADGBE tuning for zero value FretboardOptions", func(t *testing.T) {
-		fretboard, err := NewFretboard(FretboardOptions{})
+	t.Run("use EADGBE tuning for zero value Options", func(t *testing.T) {
+		fretboard, err := New(Options{})
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint(6), fretboard.Strings)
@@ -81,21 +81,21 @@ func TestNewFretboard(t *testing.T) {
 		assert.Equal(t, "E", fretboard.strings[5].root.String())
 	})
 
-	t.Run("use 22 frets as default for zero value FretboardOptions", func(t *testing.T) {
-		fretboard, err := NewFretboard(FretboardOptions{})
+	t.Run("use 22 frets as default for zero value Options", func(t *testing.T) {
+		fretboard, err := New(Options{})
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint(22), fretboard.Frets)
 	})
 
 	t.Run("return error when tuning contains a non existing note", func(t *testing.T) {
-		_, err := NewFretboard(FretboardOptions{Tuning: "ZADGBE"})
+		_, err := New(Options{Tuning: "ZADGBE"})
 
 		assert.Error(t, err)
 	})
 
 	t.Run("parse guitar strings from specified tuning", func(t *testing.T) {
-		fretboard, err := NewFretboard(FretboardOptions{Tuning: "DADGBE"})
+		fretboard, err := New(Options{Tuning: "DADGBE"})
 
 		assert.NoError(t, err)
 		assert.Equal(t, "E", fretboard.strings[0].root.String())
