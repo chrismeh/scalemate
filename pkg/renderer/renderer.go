@@ -5,7 +5,6 @@ import (
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/colornames"
-	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"io"
@@ -20,8 +19,7 @@ type PNGRenderer struct {
 	fretboardOffsetY float64
 	stringSpacing    float64
 	fretSpacing      float64
-	fontRegular      font.Face
-	fontSmall        font.Face
+	font             *truetype.Font
 }
 
 func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
@@ -54,14 +52,8 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	p.fontRegular = truetype.NewFace(f, &truetype.Options{Size: 14})
-	p.fontSmall = truetype.NewFace(f, &truetype.Options{Size: 12})
-	p.fillBackground()
+	p.font = f
 
-	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 20}))
-	p.dc.DrawString(p.fb.String(), p.fretboardOffsetX, 0.75*p.fretboardOffsetY)
-
-	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 14}))
 	err = p.drawFretboard(p.fretboardOffsetX, p.fretboardOffsetY)
 	if err != nil {
 		return err
@@ -71,6 +63,10 @@ func (p PNGRenderer) Render(w io.Writer) error {
 }
 
 func (p PNGRenderer) drawFretboard(x, y float64) error {
+	p.fillBackground()
+
+	p.drawTitle()
+	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
 	p.drawNeck(x, y)
 	p.drawTuning(x+float64(p.fb.Frets)*p.fretSpacing, y)
 
@@ -88,6 +84,11 @@ func (p PNGRenderer) fillBackground() {
 	p.dc.Fill()
 
 	p.dc.SetColor(colornames.Black)
+}
+
+func (p PNGRenderer) drawTitle() {
+	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 20}))
+	p.dc.DrawString(p.fb.String(), p.fretboardOffsetX, 0.75*p.fretboardOffsetY)
 }
 
 func (p PNGRenderer) drawNeck(offsetX, offsetY float64) {
@@ -130,8 +131,6 @@ func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
 }
 
 func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
-	p.dc.SetFontFace(p.fontSmall)
-
 	for s := 1; s <= int(p.fb.Strings); s++ {
 		for f := int(p.fb.Frets); f > 0; f-- {
 			fret, err := p.fb.Fret(uint(s), uint(f))
@@ -163,7 +162,6 @@ func (p PNGRenderer) drawNote(note string, x, y float64) {
 	p.dc.Fill()
 
 	p.dc.SetColor(colornames.White)
-	p.dc.SetFontFace(p.fontSmall)
 	p.dc.DrawStringAnchored(note, x, y-2, 0.5, 0.5)
 	p.dc.Stroke()
 }
