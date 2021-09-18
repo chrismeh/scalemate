@@ -89,7 +89,7 @@ func TestFretboard_Fret(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint(5), fret.Number)
-		assert.Equal(t, "A", fret.Note.String())
+		assert.Equal(t, "A", fret.Note)
 		assert.Equal(t, true, fret.Highlighted)
 	})
 

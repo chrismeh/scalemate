@@ -143,7 +143,7 @@ func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
 
 			x := offsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
 			y := offsetY + float64(s)*p.stringSpacing
-			p.drawNote(fret.Note.String(), x, y)
+			p.drawNote(fret.Note, x, y)
 		}
 	}
 	return nil
