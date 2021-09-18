@@ -22,9 +22,16 @@ type PNGRenderer struct {
 }
 
 func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
-	fbOffsetX, fbOffsetY, stringSpacing, fretSpacing := 40.0, 50.0, 30.0, 60.0
-	width := 2*fbOffsetX + float64(fretboard.Frets)*fretSpacing + 15
-	height := 2*fbOffsetY + float64(fretboard.Strings)*stringSpacing
+	fbOffsetX, fbOffsetY := 40.0, 50.0
+	stringSpacing, fretSpacing := 30.0, 60.0
+
+	fbWidth := float64(fretboard.Frets) * fretSpacing
+	fbHeight := float64(fretboard.Strings) * stringSpacing
+	extraSpaceTuning := 15.0
+
+	width := 2*fbOffsetX + fbWidth + extraSpaceTuning
+	height := 2*fbOffsetY + fbHeight
+
 	dc := gg.NewContext(int(width), int(height))
 
 	return PNGRenderer{
