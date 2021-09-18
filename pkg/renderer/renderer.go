@@ -3,7 +3,9 @@ package renderer
 import (
 	"github.com/chrismeh/scalemate/pkg/fretboard"
 	"github.com/fogleman/gg"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"io"
 )
@@ -44,13 +46,16 @@ func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
 }
 
 func (p PNGRenderer) Render(w io.Writer) error {
-	p.dc.DrawString(p.fb.String(), p.margin, 10)
-	p.dc.Stroke()
+	f, err := truetype.Parse(goregular.TTF)
+	if err != nil {
+		return err
+	}
+	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 14}))
 
 	p.drawNeck()
 	p.drawTuning()
 
-	err := p.drawHighlightedNotes()
+	err = p.drawHighlightedNotes()
 	if err != nil {
 		return err
 	}
