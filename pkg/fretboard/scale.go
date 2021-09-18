@@ -68,7 +68,7 @@ func buildMajorScale(root note) Scale {
 func buildHarmonicMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
-		scaleType: ScaleMajor,
+		scaleType: ScaleHarmonicMinor,
 		notes:     buildScale(root, 2, 3, 5, 7, 8, 11),
 	}
 }
