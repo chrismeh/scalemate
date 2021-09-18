@@ -7,19 +7,25 @@ import (
 
 func TestScale_Contains(t *testing.T) {
 	t.Run("return true if scale contains note", func(t *testing.T) {
-		scale, _ := NewScale("A", ScaleNaturalMinor)
+		scale, _ := NewScale("A", ScaleMinor)
 		assert.True(t, scale.contains(note{value: "C"}))
 	})
 
 	t.Run("return false if scale does not contain note", func(t *testing.T) {
-		scale, _ := NewScale("A", ScaleNaturalMinor)
+		scale, _ := NewScale("A", ScaleMinor)
 		assert.False(t, scale.contains(note{value: "C#"}))
 	})
 }
 
+func TestScale_String(t *testing.T) {
+	scale, _ := NewScale("A", ScaleMinor)
+
+	assert.Equal(t, "A minor", scale.String())
+}
+
 func TestNewScale(t *testing.T) {
 	t.Run("return error when note does not exist", func(t *testing.T) {
-		_, err := NewScale("M", ScaleNaturalMinor)
+		_, err := NewScale("M", ScaleMinor)
 		assert.Error(t, err)
 	})
 
@@ -29,7 +35,7 @@ func TestNewScale(t *testing.T) {
 	})
 
 	t.Run("build correct natural minor scale", func(t *testing.T) {
-		scale, err := NewScale("A", ScaleNaturalMinor)
+		scale, err := NewScale("A", ScaleMinor)
 		expectedNotes := []note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}}
 
 		assert.NoError(t, err)

@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	ScaleNaturalMinor  string = "natural minor"
+	ScaleMinor         string = "minor"
 	ScaleHarmonicMinor        = "harmonic minor"
 	ScaleMajor                = "major"
 )
@@ -25,7 +25,7 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	}
 
 	switch scaleType {
-	case ScaleNaturalMinor:
+	case ScaleMinor:
 		return buildMinorScale(root), nil
 	case ScaleHarmonicMinor:
 		return buildHarmonicMinorScale(root), nil
@@ -34,6 +34,10 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	default:
 		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
 	}
+}
+
+func (s Scale) String() string {
+	return fmt.Sprintf("%s %s", s.root.String(), s.scaleType)
 }
 
 func (s Scale) contains(note note) bool {
@@ -48,7 +52,7 @@ func (s Scale) contains(note note) bool {
 func buildMinorScale(root note) Scale {
 	return Scale{
 		root:      root,
-		scaleType: ScaleNaturalMinor,
+		scaleType: ScaleMinor,
 		notes:     buildScale(root, 2, 3, 5, 7, 8, 10),
 	}
 }

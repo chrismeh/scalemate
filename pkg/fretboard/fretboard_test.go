@@ -99,7 +99,7 @@ func TestFretboard_Fret(t *testing.T) {
 	t.Run("return true is the frets note is the root note of the highlighted scale", func(t *testing.T) {
 		tuning, _ := NewTuning(TuningStandard)
 		fretboard, _ := New(Options{Tuning: tuning})
-		scale, err := NewScale("A", ScaleNaturalMinor)
+		scale, err := NewScale("A", ScaleMinor)
 		fretboard.HighlightScale(scale)
 
 		fret, err := fretboard.Fret(6, 5)
