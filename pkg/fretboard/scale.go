@@ -2,7 +2,6 @@ package fretboard
 
 import (
 	"fmt"
-	"strings"
 )
 
 const (
@@ -44,15 +43,6 @@ func (s Scale) contains(note note) bool {
 		}
 	}
 	return false
-}
-
-func (s Scale) String() string {
-	var sb strings.Builder
-	for _, n := range s.notes {
-		sb.WriteString(n.String() + " ")
-	}
-
-	return strings.TrimSpace(sb.String())
 }
 
 func buildMinorScale(root note) Scale {
