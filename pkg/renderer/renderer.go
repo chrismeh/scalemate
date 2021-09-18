@@ -5,6 +5,7 @@ import (
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"io"
@@ -19,6 +20,8 @@ type PNGRenderer struct {
 	fretboardOffsetY float64
 	stringSpacing    float64
 	fretSpacing      float64
+	fontRegular      font.Face
+	fontSmall        font.Face
 }
 
 func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
@@ -51,6 +54,8 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+	p.fontRegular = truetype.NewFace(f, &truetype.Options{Size: 14})
+	p.fontSmall = truetype.NewFace(f, &truetype.Options{Size: 12})
 	p.fillBackground()
 
 	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 20}))
@@ -117,6 +122,8 @@ func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
 }
 
 func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
+	p.dc.SetFontFace(p.fontSmall)
+
 	for s := 1; s <= int(p.fb.Strings); s++ {
 		for f := int(p.fb.Frets); f > 0; f-- {
 			fret, err := p.fb.Fret(uint(s), uint(f))
@@ -128,12 +135,17 @@ func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
 			}
 
 			x := offsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
+			y := offsetY + float64(s)*p.stringSpacing
 			p.dc.SetColor(colornames.Black)
 			if fret.Root {
 				p.dc.SetColor(colornames.Lightblue)
 			}
-			p.dc.DrawCircle(x, offsetY+float64(s)*p.stringSpacing, 10)
+			p.dc.DrawCircle(x, y, 10)
 			p.dc.Fill()
+
+			p.dc.SetColor(colornames.White)
+			p.dc.DrawStringAnchored(fret.Note.String(), x, y-2, 0.5, 0.5)
+			p.dc.Stroke()
 		}
 	}
 	return nil
