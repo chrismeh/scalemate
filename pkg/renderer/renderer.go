@@ -109,6 +109,12 @@ func (p PNGRenderer) drawNeck(offsetX, offsetY float64) {
 		)
 	}
 
+	headStockOutlineX := offsetX + float64(p.fb.Frets)*p.fretSpacing
+	headStockOutlineTopY := offsetY + p.stringSpacing
+	headStockOutlineBottomY := offsetY + float64(p.fb.Strings)*p.stringSpacing
+	p.dc.DrawLine(headStockOutlineX, headStockOutlineTopY, float64(p.width), headStockOutlineTopY-20)
+	p.dc.DrawLine(headStockOutlineX, headStockOutlineBottomY, float64(p.width), headStockOutlineBottomY+20)
+
 	p.dc.Stroke()
 }
 
@@ -116,7 +122,7 @@ func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
 	notes := p.fb.Tuning.Notes()
 	for i := 0; i < len(notes); i++ {
 		stringNumber := int(p.fb.Strings) - i
-		p.dc.DrawString(notes[i], offsetX+10, offsetY+float64(stringNumber)*p.stringSpacing+5)
+		p.dc.DrawString(notes[i], offsetX+20, offsetY+float64(stringNumber)*p.stringSpacing+5)
 	}
 	p.dc.Stroke()
 }
