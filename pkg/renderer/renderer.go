@@ -11,37 +11,31 @@ import (
 )
 
 type PNGRenderer struct {
-	dc            *gg.Context
-	fb            *fretboard.Fretboard
-	width         int
-	height        int
-	margin        float64
-	stringSpacing float64
-	fretSpacing   float64
-	stringsX1     float64
-	stringsX2     float64
-	fretsY1       float64
-	fretsY2       float64
+	dc               *gg.Context
+	fb               *fretboard.Fretboard
+	width            int
+	height           int
+	fretboardOffsetX float64
+	fretboardOffsetY float64
+	stringSpacing    float64
+	fretSpacing      float64
 }
 
 func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
-	margin, stringSpacing, fretSpacing := 40.0, 30.0, 60.0
-	width := 2*margin + float64(fretboard.Frets)*fretSpacing
-	height := 2*margin + float64(fretboard.Strings)*stringSpacing
+	fbOffsetX, fbOffsetY, stringSpacing, fretSpacing := 40.0, 50.0, 30.0, 60.0
+	width := 2*fbOffsetX + float64(fretboard.Frets)*fretSpacing + 15
+	height := 2*fbOffsetY + float64(fretboard.Strings)*stringSpacing
 	dc := gg.NewContext(int(width), int(height))
 
 	return PNGRenderer{
-		dc:            dc,
-		fb:            fretboard,
-		width:         int(width),
-		height:        int(height),
-		margin:        margin,
-		stringSpacing: stringSpacing,
-		fretSpacing:   fretSpacing,
-		stringsX1:     margin,
-		stringsX2:     width - margin,
-		fretsY1:       stringSpacing,
-		fretsY2:       float64(fretboard.Strings) * stringSpacing,
+		dc:               dc,
+		fb:               fretboard,
+		width:            int(width),
+		height:           int(height),
+		fretboardOffsetX: fbOffsetX,
+		fretboardOffsetY: fbOffsetY,
+		stringSpacing:    stringSpacing,
+		fretSpacing:      fretSpacing,
 	}
 }
 
@@ -50,12 +44,13 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+	p.fillBackground()
+
+	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 20}))
+	p.dc.DrawString(p.fb.String(), p.fretboardOffsetX, 0.75*p.fretboardOffsetY)
+
 	p.dc.SetFontFace(truetype.NewFace(f, &truetype.Options{Size: 14}))
-
-	p.drawNeck()
-	p.drawTuning()
-
-	err = p.drawHighlightedNotes()
+	err = p.drawFretboard(p.fretboardOffsetX, p.fretboardOffsetY)
 	if err != nil {
 		return err
 	}
@@ -63,43 +58,58 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	return png.Encode(w, p.dc.Image())
 }
 
-func (p PNGRenderer) drawNeck() {
+func (p PNGRenderer) drawFretboard(x, y float64) error {
+	p.drawNeck(x, y)
+	p.drawTuning(x+float64(p.fb.Frets)*p.fretSpacing, y)
+
+	err := p.drawHighlightedNotes(x, y)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p PNGRenderer) fillBackground() {
 	p.dc.SetColor(colornames.White)
 	p.dc.DrawRectangle(0, 0, float64(p.width), float64(p.height))
 	p.dc.Fill()
 
 	p.dc.SetColor(colornames.Black)
-	for x := 1; x <= int(p.fb.Strings); x++ {
+}
+
+func (p PNGRenderer) drawNeck(offsetX, offsetY float64) {
+	for str := 1; str <= int(p.fb.Strings); str++ {
 		p.dc.DrawLine(
-			p.stringsX1,
-			float64(x)*p.stringSpacing,
-			p.stringsX2,
-			float64(x)*p.stringSpacing,
+			offsetX,
+			offsetY+float64(str)*p.stringSpacing,
+			offsetX+float64(p.fb.Frets)*p.fretSpacing,
+			offsetY+float64(str)*p.stringSpacing,
 		)
 	}
 
-	for x := 0; x <= int(p.fb.Frets); x++ {
+	for fret := 0; fret <= int(p.fb.Frets); fret++ {
 		p.dc.DrawLine(
-			p.margin+float64(x)*p.fretSpacing,
-			p.fretsY1,
-			p.margin+float64(x)*p.fretSpacing,
-			p.fretsY2,
+			offsetX+float64(fret)*p.fretSpacing,
+			offsetY+p.stringSpacing,
+			offsetX+float64(fret)*p.fretSpacing,
+			offsetY+float64(p.fb.Strings)*p.stringSpacing,
 		)
 	}
 
 	p.dc.Stroke()
 }
 
-func (p PNGRenderer) drawTuning() {
+func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
 	notes := p.fb.Tuning.Notes()
 	for i := 0; i < len(notes); i++ {
 		stringNumber := int(p.fb.Strings) - i
-		p.dc.DrawString(notes[i], p.stringsX2+10, float64(stringNumber)*p.stringSpacing+5)
+		p.dc.DrawString(notes[i], offsetX+10, offsetY+float64(stringNumber)*p.stringSpacing+5)
 	}
 	p.dc.Stroke()
 }
 
-func (p PNGRenderer) drawHighlightedNotes() error {
+func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
 	for s := 1; s <= int(p.fb.Strings); s++ {
 		for f := int(p.fb.Frets); f > 0; f-- {
 			fret, err := p.fb.Fret(uint(s), uint(f))
@@ -110,12 +120,12 @@ func (p PNGRenderer) drawHighlightedNotes() error {
 				continue
 			}
 
-			x := float64(p.fb.Frets-uint(f-1))*p.fretSpacing + p.margin - 0.5*p.fretSpacing
+			x := offsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
 			p.dc.SetColor(colornames.Black)
 			if fret.Root {
 				p.dc.SetColor(colornames.Lightblue)
 			}
-			p.dc.DrawCircle(x, float64(s)*p.stringSpacing, 10)
+			p.dc.DrawCircle(x, offsetY+float64(s)*p.stringSpacing, 10)
 			p.dc.Fill()
 		}
 	}
