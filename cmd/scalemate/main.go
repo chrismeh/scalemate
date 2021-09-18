@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	scaleFlag := flag.String("scale", "A minor", "Scale you want to generate, e. g. 'C major'")
+	scaleFlag := flag.String("scale", "A minor", "Scale you want to generate")
 	tuningFlag := flag.String("tuning", "E A D G B E", "Guitar/bass tuning, notes separated by a whitespace")
 	fretsFlag := flag.Uint("frets", 12, "Number of frets on the neck")
 	fileFlag := flag.String("file", "scale.png", "Filename for saving the PNG")
