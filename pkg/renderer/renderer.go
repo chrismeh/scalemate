@@ -44,6 +44,9 @@ func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
 }
 
 func (p PNGRenderer) Render(w io.Writer) error {
+	p.dc.DrawString(p.fb.String(), p.margin, 10)
+	p.dc.Stroke()
+
 	p.drawNeck()
 	p.drawTuning()
 

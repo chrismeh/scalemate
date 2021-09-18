@@ -60,6 +60,14 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 	}, nil
 }
 
+func (f *Fretboard) String() string {
+	if title := f.scale.String(); title != " " {
+		return f.scale.String()
+	}
+
+	return ""
+}
+
 type Fret struct {
 	Number      uint
 	Note        note

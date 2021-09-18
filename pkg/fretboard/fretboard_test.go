@@ -42,6 +42,22 @@ func TestTuning_IsZero(t *testing.T) {
 	})
 }
 
+func TestFretboard_String(t *testing.T) {
+	t.Run("return the scales title if a scale has been set", func(t *testing.T) {
+		scale, _ := NewScale("A", ScaleMajor)
+		fb, _ := New(Options{})
+		fb.HighlightScale(scale)
+
+		assert.Equal(t, scale.String(), fb.String())
+	})
+
+	t.Run("return an empty string if no scale has been set", func(t *testing.T) {
+		fb, _ := New(Options{})
+
+		assert.Equal(t, "", fb.String())
+	})
+}
+
 func TestFretboard_Fret(t *testing.T) {
 	scale, _ := NewScale("A", ScaleMajor)
 
