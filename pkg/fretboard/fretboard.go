@@ -55,7 +55,7 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 	return Fret{
 		Number:      fret,
 		Note:        note,
-		Highlighted: f.scale.contains(note),
+		Highlighted: f.scale.containsNote(note),
 		Root:        note == f.scale.root,
 	}, nil
 }

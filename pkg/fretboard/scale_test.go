@@ -8,12 +8,12 @@ import (
 func TestScale_Contains(t *testing.T) {
 	t.Run("return true if scale contains note", func(t *testing.T) {
 		scale, _ := NewScale("A", ScaleMinor)
-		assert.True(t, scale.contains(note{value: "C"}))
+		assert.True(t, scale.Contains("C"))
 	})
 
 	t.Run("return false if scale does not contain note", func(t *testing.T) {
 		scale, _ := NewScale("A", ScaleMinor)
-		assert.False(t, scale.contains(note{value: "C#"}))
+		assert.False(t, scale.Contains("C#"))
 	})
 }
 
