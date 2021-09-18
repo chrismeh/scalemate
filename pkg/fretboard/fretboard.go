@@ -1,11 +1,17 @@
 package fretboard
 
 import (
+	"errors"
 	"fmt"
+	"strings"
+)
+
+var (
+	TuningStandard = "E A D G B E"
 )
 
 type Fretboard struct {
-	Tuning  string
+	Tuning  Tuning
 	Strings uint
 	Frets   uint
 	strings []guitarString
@@ -13,28 +19,24 @@ type Fretboard struct {
 }
 
 type Options struct {
-	Tuning string
+	Tuning Tuning
 	Frets  uint
 }
 
 func New(options Options) (*Fretboard, error) {
-	if options.Tuning == "" {
-		options.Tuning = "EADGBE"
+	if options.Tuning.IsZero() {
+		t, _ := NewTuning(TuningStandard)
+		options.Tuning = t
 	}
 	if options.Frets == 0 {
 		options.Frets = 22
 	}
 
-	strings, err := buildStringsFromTuning(options.Tuning)
-	if err != nil {
-		return nil, err
-	}
-
 	f := Fretboard{
 		Tuning:  options.Tuning,
-		Strings: uint(len(strings)),
+		Strings: options.Tuning.Strings(),
 		Frets:   options.Frets,
-		strings: strings,
+		strings: buildStringsFromTuning(options.Tuning),
 		scale:   Scale{},
 	}
 	return &f, nil
@@ -65,6 +67,45 @@ type Fret struct {
 	Root        bool
 }
 
+type Tuning struct {
+	notes []note
+}
+
+func NewTuning(notes string) (Tuning, error) {
+	noteSlice := strings.Split(notes, " ")
+	if len(noteSlice) == 0 {
+		return Tuning{}, errors.New("notes of the tuning must be separated by a space")
+	}
+
+	t := Tuning{notes: make([]note, len(noteSlice))}
+	for i, n := range noteSlice {
+		note, err := newNote(n)
+		if err != nil {
+			return Tuning{}, err
+		}
+		t.notes[i] = note
+	}
+
+	return t, nil
+}
+
+func (t Tuning) Notes() []string {
+	notes := make([]string, len(t.notes))
+	for i, n := range t.notes {
+		notes[i] = n.String()
+	}
+
+	return notes
+}
+
+func (t Tuning) Strings() uint {
+	return uint(len(t.notes))
+}
+
+func (t Tuning) IsZero() bool {
+	return len(t.notes) == 0
+}
+
 type guitarString struct {
 	root   note
 	number uint
@@ -74,20 +115,18 @@ func (g guitarString) fret(fret uint) note {
 	return g.root.Add(fret)
 }
 
-func buildStringsFromTuning(tuning string) ([]guitarString, error) {
-	strings := make([]guitarString, len(tuning))
-	for i := 0; i < len(tuning); i++ {
-		rootNote, err := newNote(string(tuning[i]))
-		if err != nil {
-			return nil, err
-		}
+func buildStringsFromTuning(tuning Tuning) []guitarString {
+	guitarStrings := make([]guitarString, tuning.Strings())
 
-		stringNumber := len(tuning) - i
-		strings[stringNumber-1] = guitarString{
+	for i := 0; i < int(tuning.Strings()); i++ {
+		rootNote := tuning.notes[i]
+
+		stringNumber := int(tuning.Strings()) - i
+		guitarStrings[stringNumber-1] = guitarString{
 			root:   rootNote,
 			number: uint(stringNumber),
 		}
 	}
 
-	return strings, nil
+	return guitarStrings
 }

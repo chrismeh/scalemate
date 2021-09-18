@@ -83,9 +83,10 @@ func (p PNGRenderer) drawNeck() {
 }
 
 func (p PNGRenderer) drawTuning() {
-	for i := 0; i < len(p.fb.Tuning); i++ {
-		stringNumber := len(p.fb.Tuning) - i
-		p.dc.DrawString(string(p.fb.Tuning[i]), p.stringsX2+10, float64(stringNumber)*p.stringSpacing+5)
+	notes := p.fb.Tuning.Notes()
+	for i := 0; i < len(notes); i++ {
+		stringNumber := int(p.fb.Strings) - i
+		p.dc.DrawString(notes[i], p.stringsX2+10, float64(stringNumber)*p.stringSpacing+5)
 	}
 	p.dc.Stroke()
 }

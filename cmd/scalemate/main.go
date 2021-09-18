@@ -11,7 +11,7 @@ import (
 
 func main() {
 	scaleFlag := flag.String("scale", "A natural minor", "Scale you want to generate, e. g. 'C major'")
-	tuningFlag := flag.String("tuning", "EADGBE", "Guitar/bass tuning")
+	tuningFlag := flag.String("tuning", "E A D G B E", "Guitar/bass tuning, notes separated by a whitespace")
 	fretsFlag := flag.Uint("frets", 12, "Number of frets on the neck")
 	fileFlag := flag.String("file", "scale.png", "Filename for saving the PNG")
 	flag.Parse()
@@ -21,7 +21,12 @@ func main() {
 		exitWithError(err)
 	}
 
-	fb, err := fretboard.New(fretboard.Options{Tuning: *tuningFlag, Frets: *fretsFlag})
+	tuning, err := fretboard.NewTuning(*tuningFlag)
+	if err != nil {
+		exitWithError(err)
+	}
+
+	fb, err := fretboard.New(fretboard.Options{Tuning: tuning, Frets: *fretsFlag})
 	if err != nil {
 		exitWithError(err)
 	}
