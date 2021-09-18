@@ -32,16 +32,16 @@ func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
 	fbHeight := float64(fretboard.Strings) * stringSpacing
 	extraSpaceHeadstock := 30.0
 
-	width := 2*fbOffsetX + fbWidth + extraSpaceHeadstock
-	height := 2*fbOffsetY + fbHeight
+	width := int(2*fbOffsetX + fbWidth + extraSpaceHeadstock)
+	height := int(2*fbOffsetY + fbHeight)
 
-	dc := gg.NewContext(int(width), int(height))
+	dc := gg.NewContext(width, height)
 
 	return PNGRenderer{
 		dc:               dc,
 		fb:               fretboard,
-		width:            int(width),
-		height:           int(height),
+		width:            width,
+		height:           height,
 		fretboardOffsetX: fbOffsetX,
 		fretboardOffsetY: fbOffsetY,
 		stringSpacing:    stringSpacing,
