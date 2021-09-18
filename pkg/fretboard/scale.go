@@ -36,12 +36,16 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	}
 }
 
-func (s Scale) String() string {
-	return fmt.Sprintf("%s %s", s.root.String(), s.scaleType)
-}
-
 func (s Scale) Contains(noteValue string) bool {
 	return s.containsNote(note{value: noteValue})
+}
+
+func (s Scale) Root() string {
+	return s.root.String()
+}
+
+func (s Scale) String() string {
+	return fmt.Sprintf("%s %s", s.root.String(), s.scaleType)
 }
 
 func (s Scale) containsNote(note note) bool {

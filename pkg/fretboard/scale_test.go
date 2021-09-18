@@ -5,6 +5,11 @@ import (
 	"testing"
 )
 
+func TestScale_Root(t *testing.T) {
+	scale, _ := NewScale("A", ScaleMinor)
+	assert.Equal(t, "A", scale.Root())
+}
+
 func TestScale_Contains(t *testing.T) {
 	t.Run("return true if scale contains note", func(t *testing.T) {
 		scale, _ := NewScale("A", ScaleMinor)

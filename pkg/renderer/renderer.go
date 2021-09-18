@@ -30,9 +30,9 @@ func NewPNGRenderer(fretboard *fretboard.Fretboard) PNGRenderer {
 
 	fbWidth := float64(fretboard.Frets) * fretSpacing
 	fbHeight := float64(fretboard.Strings) * stringSpacing
-	extraSpaceTuning := 15.0
+	extraSpaceHeadstock := 30.0
 
-	width := 2*fbOffsetX + fbWidth + extraSpaceTuning
+	width := 2*fbOffsetX + fbWidth + extraSpaceHeadstock
 	height := 2*fbOffsetY + fbHeight
 
 	dc := gg.NewContext(int(width), int(height))
@@ -112,8 +112,8 @@ func (p PNGRenderer) drawNeck(offsetX, offsetY float64) {
 	headStockOutlineX := offsetX + float64(p.fb.Frets)*p.fretSpacing
 	headStockOutlineTopY := offsetY + p.stringSpacing
 	headStockOutlineBottomY := offsetY + float64(p.fb.Strings)*p.stringSpacing
-	p.dc.DrawLine(headStockOutlineX, headStockOutlineTopY, float64(p.width), headStockOutlineTopY-20)
-	p.dc.DrawLine(headStockOutlineX, headStockOutlineBottomY, float64(p.width), headStockOutlineBottomY+20)
+	p.dc.DrawLine(headStockOutlineX, headStockOutlineTopY, float64(p.width)-p.fretboardOffsetX, headStockOutlineTopY-20)
+	p.dc.DrawLine(headStockOutlineX, headStockOutlineBottomY, float64(p.width)-p.fretboardOffsetX, headStockOutlineBottomY+20)
 
 	p.dc.Stroke()
 }
@@ -122,9 +122,11 @@ func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
 	notes := p.fb.Tuning.Notes()
 	for i := 0; i < len(notes); i++ {
 		stringNumber := int(p.fb.Strings) - i
-		p.dc.DrawString(notes[i], offsetX+20, offsetY+float64(stringNumber)*p.stringSpacing+5)
+		x := offsetX
+		y := offsetY + float64(stringNumber)*p.stringSpacing
+
+		p.drawNote(notes[i], x, y)
 	}
-	p.dc.Stroke()
 }
 
 func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
@@ -142,17 +144,26 @@ func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
 
 			x := offsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
 			y := offsetY + float64(s)*p.stringSpacing
-			p.dc.SetColor(colornames.Black)
-			if fret.Root {
-				p.dc.SetColor(colornames.Lightblue)
-			}
-			p.dc.DrawCircle(x, y, 10)
-			p.dc.Fill()
-
-			p.dc.SetColor(colornames.White)
-			p.dc.DrawStringAnchored(fret.Note.String(), x, y-2, 0.5, 0.5)
-			p.dc.Stroke()
+			p.drawNote(fret.Note.String(), x, y)
 		}
 	}
 	return nil
+}
+
+func (p PNGRenderer) drawNote(note string, x, y float64) {
+	switch {
+	case p.fb.Scale.Root() == note:
+		p.dc.SetColor(colornames.Lightblue)
+	case p.fb.Scale.Contains(note):
+		p.dc.SetColor(colornames.Black)
+	default:
+		p.dc.SetColor(colornames.Grey)
+	}
+	p.dc.DrawCircle(x, y, 10)
+	p.dc.Fill()
+
+	p.dc.SetColor(colornames.White)
+	p.dc.SetFontFace(p.fontSmall)
+	p.dc.DrawStringAnchored(note, x, y-2, 0.5, 0.5)
+	p.dc.Stroke()
 }
