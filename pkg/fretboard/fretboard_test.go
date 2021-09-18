@@ -51,10 +51,10 @@ func TestFretboard_String(t *testing.T) {
 		assert.Equal(t, scale.String(), fb.String())
 	})
 
-	t.Run("return an empty string if no scale has been set", func(t *testing.T) {
+	t.Run("return a default title if no scale has been set", func(t *testing.T) {
 		fb, _ := New(Options{})
 
-		assert.Equal(t, "", fb.String())
+		assert.Equal(t, "Empty fretboard", fb.String())
 	})
 }
 

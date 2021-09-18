@@ -65,7 +65,7 @@ func (f *Fretboard) String() string {
 		return f.scale.String()
 	}
 
-	return ""
+	return "Empty fretboard"
 }
 
 type Fret struct {
