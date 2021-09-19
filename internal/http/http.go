@@ -14,20 +14,22 @@ type Application struct {
 }
 
 func NewApplication() Application {
-	router := http.NewServeMux()
-	srv := &http.Server{
-		Addr:         ":8080",
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		Handler:      router,
-	}
-
-	return Application{
-		server:   srv,
+	app := Application{
+		server: &http.Server{
+			Addr:         ":8080",
+			IdleTimeout:  time.Minute,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		},
 		infoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
 		errorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 	}
+
+	router := http.NewServeMux()
+	router.HandleFunc("/scale", app.handleGetScale)
+	app.server.Handler = router
+
+	return app
 }
 
 func (a Application) Run() error {
