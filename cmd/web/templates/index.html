@@ -7,13 +7,72 @@
     <link rel="stylesheet" href="/static/bulma.min.css">
 </head>
 <body>
-<section class="section">
-    <div class="container is-max-desktop content">
-        <h1>scalemate</h1>
-        <div class="mt-5">
-            <img src="/scale" alt="a guitar scale">
+<div id="app">
+    <section class="section">
+        <div class="container is-max-desktop content">
+            <h1 class="has-text-primary">scalemate</h1>
+            <div class="mt-5">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal has-text-left">
+                        <label class="label" for="root">Root:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <div class="select">
+                                    <select id="root" v-model="rootNote">
+                                        <option v-for="note in notes" :value="note">{{note}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal has-text-left">
+                        <label class="label" for="scale">Scale:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <div class="select">
+                                    <select id="scale" v-model="scale">
+                                        <option v-for="scale in scales" :value="scale">{{scale}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal has-text-left">
+                        <label class="label" for="tuning">Tuning:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <div class="select">
+                                    <select id="tuning" v-model="tuning">
+                                        <option value="E A D G B E">Standard</option>
+                                        <option value="D# G# C# F# A# D#">Half step down</option>
+                                        <option value="D G C F A D">Full step down</option>
+                                        <option value="D A D G B E">Drop D</option>
+                                        <option value="C# G# C# F# A# D#">Drop C#</option>
+                                        <option value="C G C F A D">Drop C</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <img :src="imageSRC" alt="a guitar scale">
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+<script src="/static/vue.min.js"></script>
+<script src="/static/app.js"></script>
 </body>
 </html>
