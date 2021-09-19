@@ -15,16 +15,14 @@ func (a Application) handleGetIndex(w http.ResponseWriter, r *http.Request) {
 
 	template, err := a.templateFS.Open("index.html")
 	if err != nil {
-		a.errorLog.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		a.internalServerError(err, w)
 		return
 	}
 	defer template.Close()
 
 	index, err := io.ReadAll(template)
 	if err != nil {
-		a.errorLog.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		a.internalServerError(err, w)
 		return
 	}
 
@@ -39,15 +37,13 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 
 	fb, err := fretboard.New(fretboard.Options{Frets: 12})
 	if err != nil {
-		a.errorLog.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		a.internalServerError(err, w)
 		return
 	}
 
 	scale, err := fretboard.NewScale("A", fretboard.ScaleMinor)
 	if err != nil {
-		a.errorLog.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		a.internalServerError(err, w)
 		return
 	}
 	fb.HighlightScale(scale)
@@ -57,8 +53,7 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "image/png")
 	err = png.Render(w)
 	if err != nil {
-		a.errorLog.Println(err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		a.internalServerError(err, w)
 		return
 	}
 }

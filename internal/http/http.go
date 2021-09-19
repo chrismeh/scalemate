@@ -46,3 +46,8 @@ func (a Application) Run() error {
 	a.infoLog.Printf("starting application at port %s", a.server.Addr)
 	return a.server.ListenAndServe()
 }
+
+func (a Application) internalServerError(err error, w http.ResponseWriter) {
+	a.errorLog.Println(err)
+	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+}
