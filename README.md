@@ -1,15 +1,15 @@
 # scalemate
 
-A simple CLI tool (as of now) for generating graphical representations of guitar/bass scales.
+A tool for generating images for guitar/bass scales.
 
 ## Usage
 
 ```
-$ make build            
-go build -o=./bin/scalemate ./cmd/scalemate
+$ make build
+go build -o=./bin/scalemate-cli ./cmd/cli
 
-$ bin/scalemate --help
-Usage of bin/scalemate:
+$ bin/scalemate-cli --help
+Usage of bin/scalemate-cli:
   -file string
         Filename for saving the PNG (default "scale.png")
   -frets uint
@@ -23,7 +23,7 @@ Usage of bin/scalemate:
 
 Example: Draw the A major scale in Drop-C tuning:
 ```bash
-$ bin/scalemate -tuning="C G C F A D" -scale="A major" -file="a-major-in-drop-c.png"
+$ bin/scalemate-cli -tuning="C G C F A D" -scale="A major" -file="a-major-in-drop-c.png"
 ```
 
 This will generate the following image:
