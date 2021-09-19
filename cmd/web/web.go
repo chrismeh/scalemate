@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-//go:embed templates
+//go:embed templates static
 var embeddedFiles embed.FS
 
 func main() {

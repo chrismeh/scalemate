@@ -34,9 +34,15 @@ func NewApplication(embeddedFiles embed.FS) (Application, error) {
 	}
 	app.templateFS = templateFS
 
+	staticFiles, err := fs.Sub(embeddedFiles, "static")
+	if err != nil {
+		return Application{}, err
+	}
+
 	router := http.NewServeMux()
-	router.HandleFunc("/scale", app.handleGetScale)
 	router.HandleFunc("/", app.handleGetIndex)
+	router.HandleFunc("/scale", app.handleGetScale)
+	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFiles))))
 	app.server.Handler = router
 
 	return app, nil
