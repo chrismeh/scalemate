@@ -47,4 +47,12 @@ Usage of bin/scalemate-web:
 Example: Start scalemate server at port 5000:
 ```shell
 $ bin/scalemate-web -addr=":5000"
+INFO    2021/09/19 17:15:02 starting application at port :5000
+```
+
+Example: Start scalemate server at port 5000, using Docker:
+```shell
+$ docker build -t scalemate:latest
+$ docker run --rm -e ADDR=":5000" -p "5000:5000" scalemate:latest
+INFO    2021/09/19 17:15:02 starting application at port :5000
 ```
