@@ -38,7 +38,8 @@ func main() {
 	}
 	defer f.Close()
 
-	r := renderer.NewPNGRenderer(fb)
+	options := renderer.PNGOptions{FretboardOffsetX: 40.0, FretboardOffsetY: 50.0, DrawTitle: true}
+	r := renderer.NewPNGRenderer(fb, options)
 	err = r.Render(f)
 	if err != nil {
 		_ = f.Close()

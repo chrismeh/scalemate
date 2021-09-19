@@ -48,7 +48,8 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	}
 	fb.HighlightScale(scale)
 
-	png := renderer.NewPNGRenderer(fb)
+	options := renderer.PNGOptions{FretboardOffsetX: 0, FretboardOffsetY: 40.0, DrawTitle: false}
+	png := renderer.NewPNGRenderer(fb, options)
 
 	w.Header().Add("content-type", "image/png")
 	err = png.Render(w)
