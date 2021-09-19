@@ -3,8 +3,33 @@ package http
 import (
 	"github.com/chrismeh/scalemate/pkg/fretboard"
 	"github.com/chrismeh/scalemate/pkg/renderer"
+	"io"
 	"net/http"
 )
+
+func (a Application) handleGetIndex(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	template, err := a.templateFS.Open("index.html")
+	if err != nil {
+		a.errorLog.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer template.Close()
+
+	index, err := io.ReadAll(template)
+	if err != nil {
+		a.errorLog.Println(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = w.Write(index)
+}
 
 func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {

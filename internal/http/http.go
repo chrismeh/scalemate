@@ -1,6 +1,8 @@
 package http
 
 import (
+	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -8,12 +10,13 @@ import (
 )
 
 type Application struct {
-	server   *http.Server
-	infoLog  *log.Logger
-	errorLog *log.Logger
+	server     *http.Server
+	infoLog    *log.Logger
+	errorLog   *log.Logger
+	templateFS fs.FS
 }
 
-func NewApplication() Application {
+func NewApplication(embeddedFiles embed.FS) (Application, error) {
 	app := Application{
 		server: &http.Server{
 			Addr:         ":8080",
@@ -25,11 +28,18 @@ func NewApplication() Application {
 		errorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 	}
 
+	templateFS, err := fs.Sub(embeddedFiles, "templates")
+	if err != nil {
+		return Application{}, err
+	}
+	app.templateFS = templateFS
+
 	router := http.NewServeMux()
 	router.HandleFunc("/scale", app.handleGetScale)
+	router.HandleFunc("/", app.handleGetIndex)
 	app.server.Handler = router
 
-	return app
+	return app, nil
 }
 
 func (a Application) Run() error {
