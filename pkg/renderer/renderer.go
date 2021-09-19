@@ -8,6 +8,7 @@ import (
 	"golang.org/x/image/font/gofont/goregular"
 	"image/png"
 	"io"
+	"strconv"
 )
 
 type PNGRenderer struct {
@@ -88,6 +89,7 @@ func (p PNGRenderer) fillBackground() {
 func (p PNGRenderer) drawTitle() {
 	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 20}))
 	p.dc.DrawString(p.fb.String(), p.fretboardOffsetX, 0.75*p.fretboardOffsetY)
+	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
 }
 
 func (p PNGRenderer) drawNeck() {
@@ -107,6 +109,17 @@ func (p PNGRenderer) drawNeck() {
 			p.fretboardOffsetX+float64(fret)*p.fretSpacing,
 			p.fretboardOffsetY+float64(p.fb.Strings)*p.stringSpacing,
 		)
+
+		fretNumber := int(p.fb.Frets) - fret
+		if fretNumber > 0 {
+			p.dc.DrawStringAnchored(
+				strconv.Itoa(fretNumber),
+				p.fretboardOffsetX+float64(fret)*p.fretSpacing+0.5*p.fretSpacing,
+				p.fretboardOffsetY+float64(p.fb.Strings)*p.stringSpacing+0.75*p.stringSpacing,
+				0.5,
+				0.5,
+			)
+		}
 	}
 
 	headStockOutlineX := p.fretboardOffsetX + float64(p.fb.Frets)*p.fretSpacing
@@ -119,8 +132,6 @@ func (p PNGRenderer) drawNeck() {
 }
 
 func (p PNGRenderer) drawTuning() {
-	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
-
 	notes := p.fb.Tuning.Notes()
 	for i := 0; i < len(notes); i++ {
 		stringNumber := int(p.fb.Strings) - i
@@ -132,8 +143,6 @@ func (p PNGRenderer) drawTuning() {
 }
 
 func (p PNGRenderer) drawHighlightedNotes() error {
-	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
-
 	for s := 1; s <= int(p.fb.Strings); s++ {
 		for f := int(p.fb.Frets); f > 0; f-- {
 			fret, err := p.fb.Fret(uint(s), uint(f))
