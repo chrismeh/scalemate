@@ -57,3 +57,8 @@ func (a Application) internalServerError(err error, w http.ResponseWriter) {
 	a.errorLog.Println(err)
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
+
+func (a Application) badRequest(err error, w http.ResponseWriter) {
+	a.errorLog.Println(err)
+	http.Error(w, "Bad Request", http.StatusBadRequest)
+}

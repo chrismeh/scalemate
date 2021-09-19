@@ -5,6 +5,7 @@ import (
 	"github.com/chrismeh/scalemate/pkg/renderer"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 func (a Application) handleGetIndex(w http.ResponseWriter, r *http.Request) {
@@ -34,16 +35,23 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	request := parseGetScaleRequest(r)
 
-	fb, err := fretboard.New(fretboard.Options{Frets: 12})
+	tuning, err := fretboard.NewTuning(request.tuning)
 	if err != nil {
-		a.internalServerError(err, w)
+		a.badRequest(err, w)
 		return
 	}
 
-	scale, err := fretboard.NewScale("A", fretboard.ScaleMinor)
+	fb, err := fretboard.New(fretboard.Options{Frets: request.frets, Tuning: tuning})
 	if err != nil {
-		a.internalServerError(err, w)
+		a.badRequest(err, w)
+		return
+	}
+
+	scale, err := fretboard.NewScale(request.rootNote, request.scaleType)
+	if err != nil {
+		a.badRequest(err, w)
 		return
 	}
 	fb.HighlightScale(scale)
@@ -57,4 +65,39 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 		a.internalServerError(err, w)
 		return
 	}
+}
+
+type getScaleRequest struct {
+	rootNote  string
+	scaleType string
+	tuning    string
+	frets     uint
+}
+
+func parseGetScaleRequest(r *http.Request) getScaleRequest {
+	req := getScaleRequest{
+		rootNote:  "A",
+		scaleType: fretboard.ScaleMinor,
+		tuning:    fretboard.TuningStandard,
+		frets:     12,
+	}
+
+	query := r.URL.Query()
+	if rootNote := query.Get("root"); rootNote != "" {
+		req.rootNote = rootNote
+	}
+	if scaleType := query.Get("type"); scaleType != "" {
+		req.scaleType = scaleType
+	}
+	if tuning := query.Get("tuning"); tuning != "" {
+		req.tuning = tuning
+	}
+	if frets := query.Get("frets"); frets != "" {
+		numberOfFrets, err := strconv.Atoi(frets)
+		if err == nil && numberOfFrets > 0 {
+			req.frets = uint(numberOfFrets)
+		}
+	}
+
+	return req
 }
