@@ -54,7 +54,7 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	}
 	p.font = f
 
-	err = p.drawFretboard(p.fretboardOffsetX, p.fretboardOffsetY)
+	err = p.drawFretboard()
 	if err != nil {
 		return err
 	}
@@ -62,15 +62,14 @@ func (p PNGRenderer) Render(w io.Writer) error {
 	return png.Encode(w, p.dc.Image())
 }
 
-func (p PNGRenderer) drawFretboard(x, y float64) error {
+func (p PNGRenderer) drawFretboard() error {
 	p.fillBackground()
 
 	p.drawTitle()
-	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
-	p.drawNeck(x, y)
-	p.drawTuning(x+float64(p.fb.Frets)*p.fretSpacing, y)
+	p.drawNeck()
+	p.drawTuning()
 
-	err := p.drawHighlightedNotes(x, y)
+	err := p.drawHighlightedNotes()
 	if err != nil {
 		return err
 	}
@@ -91,46 +90,50 @@ func (p PNGRenderer) drawTitle() {
 	p.dc.DrawString(p.fb.String(), p.fretboardOffsetX, 0.75*p.fretboardOffsetY)
 }
 
-func (p PNGRenderer) drawNeck(offsetX, offsetY float64) {
+func (p PNGRenderer) drawNeck() {
 	for str := 1; str <= int(p.fb.Strings); str++ {
 		p.dc.DrawLine(
-			offsetX,
-			offsetY+float64(str)*p.stringSpacing,
-			offsetX+float64(p.fb.Frets)*p.fretSpacing,
-			offsetY+float64(str)*p.stringSpacing,
+			p.fretboardOffsetX,
+			p.fretboardOffsetY+float64(str)*p.stringSpacing,
+			p.fretboardOffsetX+float64(p.fb.Frets)*p.fretSpacing,
+			p.fretboardOffsetY+float64(str)*p.stringSpacing,
 		)
 	}
 
 	for fret := 0; fret <= int(p.fb.Frets); fret++ {
 		p.dc.DrawLine(
-			offsetX+float64(fret)*p.fretSpacing,
-			offsetY+p.stringSpacing,
-			offsetX+float64(fret)*p.fretSpacing,
-			offsetY+float64(p.fb.Strings)*p.stringSpacing,
+			p.fretboardOffsetX+float64(fret)*p.fretSpacing,
+			p.fretboardOffsetY+p.stringSpacing,
+			p.fretboardOffsetX+float64(fret)*p.fretSpacing,
+			p.fretboardOffsetY+float64(p.fb.Strings)*p.stringSpacing,
 		)
 	}
 
-	headStockOutlineX := offsetX + float64(p.fb.Frets)*p.fretSpacing
-	headStockOutlineTopY := offsetY + p.stringSpacing
-	headStockOutlineBottomY := offsetY + float64(p.fb.Strings)*p.stringSpacing
+	headStockOutlineX := p.fretboardOffsetX + float64(p.fb.Frets)*p.fretSpacing
+	headStockOutlineTopY := p.fretboardOffsetY + p.stringSpacing
+	headStockOutlineBottomY := p.fretboardOffsetY + float64(p.fb.Strings)*p.stringSpacing
 	p.dc.DrawLine(headStockOutlineX, headStockOutlineTopY, float64(p.width)-p.fretboardOffsetX, headStockOutlineTopY-20)
 	p.dc.DrawLine(headStockOutlineX, headStockOutlineBottomY, float64(p.width)-p.fretboardOffsetX, headStockOutlineBottomY+20)
 
 	p.dc.Stroke()
 }
 
-func (p PNGRenderer) drawTuning(offsetX, offsetY float64) {
+func (p PNGRenderer) drawTuning() {
+	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
+
 	notes := p.fb.Tuning.Notes()
 	for i := 0; i < len(notes); i++ {
 		stringNumber := int(p.fb.Strings) - i
-		x := offsetX
-		y := offsetY + float64(stringNumber)*p.stringSpacing
+		x := p.fretboardOffsetX + float64(p.fb.Frets)*p.fretSpacing
+		y := p.fretboardOffsetY + float64(stringNumber)*p.stringSpacing
 
 		p.drawNote(notes[i], x, y)
 	}
 }
 
-func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
+func (p PNGRenderer) drawHighlightedNotes() error {
+	p.dc.SetFontFace(truetype.NewFace(p.font, &truetype.Options{Size: 12}))
+
 	for s := 1; s <= int(p.fb.Strings); s++ {
 		for f := int(p.fb.Frets); f > 0; f-- {
 			fret, err := p.fb.Fret(uint(s), uint(f))
@@ -141,8 +144,8 @@ func (p PNGRenderer) drawHighlightedNotes(offsetX, offsetY float64) error {
 				continue
 			}
 
-			x := offsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
-			y := offsetY + float64(s)*p.stringSpacing
+			x := p.fretboardOffsetX + float64(p.fb.Frets-uint(f-1))*p.fretSpacing - 0.5*p.fretSpacing
+			y := p.fretboardOffsetY + float64(s)*p.stringSpacing
 			p.drawNote(fret.Note, x, y)
 		}
 	}
