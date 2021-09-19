@@ -10,7 +10,12 @@ const (
 	ScaleMajor                = "major"
 )
 
-var notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
+var (
+	notes                       = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
+	intervalsMinorScale         = []uint{2, 3, 5, 7, 8, 10}
+	intervalsMajorScale         = []uint{2, 4, 5, 7, 9, 11}
+	intervalsHarmonicMinorScale = []uint{2, 3, 5, 7, 8, 11}
+)
 
 type Scale struct {
 	root      note
@@ -24,16 +29,18 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 		return Scale{}, err
 	}
 
-	switch scaleType {
-	case ScaleMinor:
-		return buildMinorScale(root), nil
-	case ScaleHarmonicMinor:
-		return buildHarmonicMinorScale(root), nil
-	case ScaleMajor:
-		return buildMajorScale(root), nil
-	default:
+	scaleTypeMapping := map[string][]uint{
+		ScaleMinor:         intervalsMinorScale,
+		ScaleMajor:         intervalsMajorScale,
+		ScaleHarmonicMinor: intervalsHarmonicMinorScale,
+	}
+
+	intervals, ok := scaleTypeMapping[scaleType]
+	if !ok {
 		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
 	}
+
+	return Scale{root: root, scaleType: scaleType, notes: buildScale(root, intervals...)}, nil
 }
 
 func (s Scale) Contains(noteValue string) bool {
@@ -55,30 +62,6 @@ func (s Scale) containsNote(note note) bool {
 		}
 	}
 	return false
-}
-
-func buildMinorScale(root note) Scale {
-	return Scale{
-		root:      root,
-		scaleType: ScaleMinor,
-		notes:     buildScale(root, 2, 3, 5, 7, 8, 10),
-	}
-}
-
-func buildMajorScale(root note) Scale {
-	return Scale{
-		root:      root,
-		scaleType: ScaleMajor,
-		notes:     buildScale(root, 2, 4, 5, 7, 9, 11),
-	}
-}
-
-func buildHarmonicMinorScale(root note) Scale {
-	return Scale{
-		root:      root,
-		scaleType: ScaleHarmonicMinor,
-		notes:     buildScale(root, 2, 3, 5, 7, 8, 11),
-	}
 }
 
 func buildScale(root note, intervals ...uint) []note {
