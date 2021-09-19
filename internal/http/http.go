@@ -16,10 +16,10 @@ type Application struct {
 	templateFS fs.FS
 }
 
-func NewApplication(embeddedFiles embed.FS) (Application, error) {
+func NewApplication(addr string, embeddedFiles embed.FS) (Application, error) {
 	app := Application{
 		server: &http.Server{
-			Addr:         ":8080",
+			Addr:         addr,
 			IdleTimeout:  time.Minute,
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 10 * time.Second,

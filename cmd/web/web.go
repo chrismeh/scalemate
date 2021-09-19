@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"github.com/chrismeh/scalemate/internal/http"
 	"log"
 )
@@ -10,7 +11,10 @@ import (
 var embeddedFiles embed.FS
 
 func main() {
-	app, err := http.NewApplication(embeddedFiles)
+	addr := flag.String("addr", ":8080", "TCP address for the server to listen on")
+	flag.Parse()
+
+	app, err := http.NewApplication(*addr, embeddedFiles)
 	if err != nil {
 		log.Fatal(err)
 	}
