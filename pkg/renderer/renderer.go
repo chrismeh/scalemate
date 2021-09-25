@@ -166,7 +166,7 @@ func (p PNGRenderer) drawHighlightedNotes() error {
 	return nil
 }
 
-func (p PNGRenderer) drawNote(note string, x, y float64) {
+func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	switch {
 	case p.fb.Scale.Root() == note:
 		p.dc.SetColor(colornames.Lightblue)
@@ -179,6 +179,6 @@ func (p PNGRenderer) drawNote(note string, x, y float64) {
 	p.dc.Fill()
 
 	p.dc.SetColor(colornames.White)
-	p.dc.DrawStringAnchored(note, x, y-2, 0.5, 0.5)
+	p.dc.DrawStringAnchored(note.String(), x, y-2, 0.5, 0.5)
 	p.dc.Stroke()
 }

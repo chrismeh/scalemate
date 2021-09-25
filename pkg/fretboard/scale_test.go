@@ -7,25 +7,25 @@ import (
 
 func TestScale_Root(t *testing.T) {
 	scale, _ := NewScale("A", ScaleMinor)
-	assert.Equal(t, "A", scale.Root())
+	assert.Equal(t, Note{value: "A"}, scale.Root())
 }
 
 func TestScale_Contains(t *testing.T) {
 	t.Run("return true if scale contains note", func(t *testing.T) {
 		scale, _ := NewScale("A", ScaleMinor)
-		assert.True(t, scale.Contains("C"))
+		assert.True(t, scale.Contains(Note{value: "C"}))
 	})
 
 	t.Run("return false if scale does not contain note", func(t *testing.T) {
 		scale, _ := NewScale("A", ScaleMinor)
-		assert.False(t, scale.Contains("C#"))
+		assert.False(t, scale.Contains(Note{value: "C#"}))
 	})
 }
 
-func TestScale_String(t *testing.T) {
+func TestScale_Title(t *testing.T) {
 	scale, _ := NewScale("A", ScaleMinor)
 
-	assert.Equal(t, "A minor", scale.String())
+	assert.Equal(t, "A minor", scale.Title())
 }
 
 func TestNewScale(t *testing.T) {
@@ -41,7 +41,7 @@ func TestNewScale(t *testing.T) {
 
 	t.Run("build correct natural minor scale", func(t *testing.T) {
 		scale, err := NewScale("A", ScaleMinor)
-		expectedNotes := []note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}}
+		expectedNotes := []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}}
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedNotes, scale.notes)
@@ -49,7 +49,7 @@ func TestNewScale(t *testing.T) {
 
 	t.Run("build correct major scale", func(t *testing.T) {
 		scale, err := NewScale("C", ScaleMajor)
-		expectedNotes := []note{{value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}, {value: "A"}, {value: "B"}}
+		expectedNotes := []Note{{value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}, {value: "A"}, {value: "B"}}
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedNotes, scale.notes)
@@ -57,7 +57,7 @@ func TestNewScale(t *testing.T) {
 
 	t.Run("build correct harmonic minor scale", func(t *testing.T) {
 		scale, err := NewScale("A", ScaleHarmonicMinor)
-		expectedNotes := []note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G#"}}
+		expectedNotes := []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G#"}}
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedNotes, scale.notes)
@@ -66,14 +66,14 @@ func TestNewScale(t *testing.T) {
 
 func TestNewNote(t *testing.T) {
 	t.Run("return note struct with correct value", func(t *testing.T) {
-		n, err := newNote("A")
+		n, err := NewNote("A")
 
 		assert.NoError(t, err)
 		assert.Equal(t, "A", n.String())
 	})
 
 	t.Run("return error when note does not exist", func(t *testing.T) {
-		_, err := newNote("M")
+		_, err := NewNote("M")
 		assert.Error(t, err)
 	})
 }
@@ -97,7 +97,7 @@ func TestNote_Add(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			start := note{value: tt.StartNote}
+			start := Note{value: tt.StartNote}
 			result := start.Add(tt.Halfsteps)
 
 			assert.Equal(t, tt.ExpectedNote, result.String())

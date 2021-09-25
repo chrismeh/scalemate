@@ -18,13 +18,13 @@ var (
 )
 
 type Scale struct {
-	root      note
+	root      Note
 	scaleType string
-	notes     []note
+	notes     []Note
 }
 
 func NewScale(rootNote string, scaleType string) (Scale, error) {
-	root, err := newNote(rootNote)
+	root, err := NewNote(rootNote)
 	if err != nil {
 		return Scale{}, err
 	}
@@ -43,19 +43,15 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 	return Scale{root: root, scaleType: scaleType, notes: buildScale(root, intervals...)}, nil
 }
 
-func (s Scale) Contains(noteValue string) bool {
-	return s.containsNote(note{value: noteValue})
-}
-
-func (s Scale) Root() string {
-	return s.root.String()
-}
-
-func (s Scale) String() string {
+func (s Scale) Title() string {
 	return fmt.Sprintf("%s %s", s.root.String(), s.scaleType)
 }
 
-func (s Scale) containsNote(note note) bool {
+func (s Scale) Root() Note {
+	return s.root
+}
+
+func (s Scale) Contains(note Note) bool {
 	for _, n := range s.notes {
 		if note == n {
 			return true
@@ -64,8 +60,8 @@ func (s Scale) containsNote(note note) bool {
 	return false
 }
 
-func buildScale(root note, intervals ...uint) []note {
-	notes := make([]note, len(intervals)+1)
+func buildScale(root Note, intervals ...uint) []Note {
+	notes := make([]Note, len(intervals)+1)
 	notes[0] = root
 	for i, interval := range intervals {
 		notes[i+1] = root.Add(interval)
@@ -74,21 +70,21 @@ func buildScale(root note, intervals ...uint) []note {
 	return notes
 }
 
-type note struct {
+type Note struct {
 	value string
 }
 
-func newNote(value string) (note, error) {
+func NewNote(value string) (Note, error) {
 	for _, n := range notes {
 		if value == n {
-			return note{value: n}, nil
+			return Note{value: n}, nil
 		}
 	}
 
-	return note{}, fmt.Errorf("note does not exist: %s", value)
+	return Note{}, fmt.Errorf("note does not exist: %s", value)
 }
 
-func (n note) Add(halfsteps uint) note {
+func (n Note) Add(halfsteps uint) Note {
 	if halfsteps == 0 || halfsteps%12 == 0 {
 		return n
 	}
@@ -106,9 +102,9 @@ func (n note) Add(halfsteps uint) note {
 		nextNoteIndex = nextNoteIndex % 12
 	}
 
-	return note{value: notes[nextNoteIndex]}
+	return Note{value: notes[nextNoteIndex]}
 }
 
-func (n note) String() string {
+func (n Note) String() string {
 	return n.value
 }

@@ -10,11 +10,17 @@ var (
 	TuningStandard = "E A D G B E"
 )
 
+type scale interface {
+	Title() string
+	Root() Note
+	Contains(Note) bool
+}
+
 type Fretboard struct {
 	Tuning  Tuning
 	Strings uint
 	Frets   uint
-	Scale   Scale
+	Scale   scale
 	strings []guitarString
 }
 
@@ -37,7 +43,7 @@ func New(options Options) (*Fretboard, error) {
 		Strings: options.Tuning.Strings(),
 		Frets:   options.Frets,
 		strings: buildStringsFromTuning(options.Tuning),
-		Scale:   Scale{},
+		Scale:   nil,
 	}
 	return &f, nil
 }
@@ -52,31 +58,32 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 	}
 
 	note := f.strings[string-1].fret(fret)
+	fretboardHasScale := f.Scale != nil
 	return Fret{
 		Number:      fret,
-		Note:        note.String(),
-		Highlighted: f.Scale.containsNote(note),
-		Root:        note == f.Scale.root,
+		Note:        note,
+		Highlighted: fretboardHasScale && f.Scale.Contains(note),
+		Root:        fretboardHasScale && note == f.Scale.Root(),
 	}, nil
 }
 
 func (f *Fretboard) String() string {
-	if title := f.Scale.String(); title != " " {
-		return f.Scale.String()
+	if f.Scale == nil || f.Scale.Title() == " " {
+		return "Empty fretboard"
 	}
 
-	return "Empty fretboard"
+	return f.Scale.Title()
 }
 
 type Fret struct {
 	Number      uint
-	Note        string
+	Note        Note
 	Highlighted bool
 	Root        bool
 }
 
 type Tuning struct {
-	notes []note
+	notes []Note
 }
 
 func NewTuning(notes string) (Tuning, error) {
@@ -85,9 +92,9 @@ func NewTuning(notes string) (Tuning, error) {
 		return Tuning{}, errors.New("notes of the tuning must be separated by a space")
 	}
 
-	t := Tuning{notes: make([]note, len(noteSlice))}
+	t := Tuning{notes: make([]Note, len(noteSlice))}
 	for i, n := range noteSlice {
-		note, err := newNote(n)
+		note, err := NewNote(n)
 		if err != nil {
 			return Tuning{}, err
 		}
@@ -97,13 +104,8 @@ func NewTuning(notes string) (Tuning, error) {
 	return t, nil
 }
 
-func (t Tuning) Notes() []string {
-	notes := make([]string, len(t.notes))
-	for i, n := range t.notes {
-		notes[i] = n.String()
-	}
-
-	return notes
+func (t Tuning) Notes() []Note {
+	return t.notes
 }
 
 func (t Tuning) Strings() uint {
@@ -115,11 +117,11 @@ func (t Tuning) IsZero() bool {
 }
 
 type guitarString struct {
-	root   note
+	root   Note
 	number uint
 }
 
-func (g guitarString) fret(fret uint) note {
+func (g guitarString) fret(fret uint) Note {
 	return g.root.Add(fret)
 }
 

@@ -25,7 +25,14 @@ func TestTuning_Strings(t *testing.T) {
 
 func TestTuning_Notes(t *testing.T) {
 	tuning, _ := NewTuning("E A D G B E")
-	expectedNotes := []string{"E", "A", "D", "G", "B", "E"}
+	expectedNotes := []Note{
+		{value: "E"},
+		{value: "A"},
+		{value: "D"},
+		{value: "G"},
+		{value: "B"},
+		{value: "E"},
+	}
 
 	assert.Equal(t, expectedNotes, tuning.Notes())
 }
@@ -48,7 +55,7 @@ func TestFretboard_String(t *testing.T) {
 		fb, _ := New(Options{})
 		fb.HighlightScale(scale)
 
-		assert.Equal(t, scale.String(), fb.String())
+		assert.Equal(t, scale.Title(), fb.String())
 	})
 
 	t.Run("return a default title if no scale has been set", func(t *testing.T) {
@@ -59,7 +66,7 @@ func TestFretboard_String(t *testing.T) {
 }
 
 func TestFretboard_Fret(t *testing.T) {
-	scale, _ := NewScale("A", ScaleMajor)
+	testScale, _ := NewScale("A", ScaleMajor)
 
 	t.Run("return error for an invalid string number", func(t *testing.T) {
 		tuning, _ := NewTuning(TuningStandard)
@@ -84,19 +91,19 @@ func TestFretboard_Fret(t *testing.T) {
 	t.Run("return correct fret for specified fret number and tuning", func(t *testing.T) {
 		tuning, _ := NewTuning(TuningStandard)
 		fretboard, _ := New(Options{Tuning: tuning})
-		fretboard.HighlightScale(scale)
+		fretboard.HighlightScale(testScale)
 		fret, err := fretboard.Fret(6, 5)
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint(5), fret.Number)
-		assert.Equal(t, "A", fret.Note)
+		assert.Equal(t, Note{value: "A"}, fret.Note)
 		assert.Equal(t, true, fret.Highlighted)
 	})
 
 	t.Run("return false for Highlighted if a frets note is not in scale", func(t *testing.T) {
 		tuning, _ := NewTuning(TuningStandard)
 		fretboard, _ := New(Options{Tuning: tuning})
-		fretboard.HighlightScale(scale)
+		fretboard.HighlightScale(testScale)
 		fret, err := fretboard.Fret(6, 1)
 
 		assert.NoError(t, err)
