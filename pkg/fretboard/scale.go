@@ -17,6 +17,21 @@ var (
 	intervalsHarmonicMinorScale = []uint{2, 3, 5, 7, 8, 11}
 )
 
+type emptyScale struct {
+}
+
+func (e emptyScale) Title() string {
+	return ""
+}
+
+func (e emptyScale) Root() Note {
+	return Note{value: ""}
+}
+
+func (e emptyScale) Contains(_ Note) bool {
+	return false
+}
+
 type Scale struct {
 	root      Note
 	scaleType string
