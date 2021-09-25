@@ -10,17 +10,11 @@ var (
 	TuningStandard = "E A D G B E"
 )
 
-type scale interface {
-	Title() string
-	Root() Note
-	Contains(Note) bool
-}
-
 type Fretboard struct {
 	Tuning  Tuning
 	Strings uint
 	Frets   uint
-	Scale   scale
+	Scale   Scale
 	strings []guitarString
 }
 

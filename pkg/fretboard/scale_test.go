@@ -40,27 +40,36 @@ func TestNewScale(t *testing.T) {
 	})
 
 	t.Run("build correct natural minor scale", func(t *testing.T) {
-		scale, err := NewScale("A", ScaleMinor)
-		expectedNotes := []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}}
+		testScale, err := NewScale("A", ScaleMinor)
+		expectedScale := minorScale{scale{
+			root:  Note{value: "A"},
+			notes: []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}},
+		}}
 
 		assert.NoError(t, err)
-		assert.Equal(t, expectedNotes, scale.notes)
+		assert.Equal(t, expectedScale, testScale)
 	})
 
 	t.Run("build correct major scale", func(t *testing.T) {
-		scale, err := NewScale("C", ScaleMajor)
-		expectedNotes := []Note{{value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}, {value: "A"}, {value: "B"}}
+		testScale, err := NewScale("C", ScaleMajor)
+		expectedScale := majorScale{scale{
+			root:  Note{value: "C"},
+			notes: []Note{{value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G"}, {value: "A"}, {value: "B"}},
+		}}
 
 		assert.NoError(t, err)
-		assert.Equal(t, expectedNotes, scale.notes)
+		assert.Equal(t, expectedScale, testScale)
 	})
 
 	t.Run("build correct harmonic minor scale", func(t *testing.T) {
-		scale, err := NewScale("A", ScaleHarmonicMinor)
-		expectedNotes := []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G#"}}
+		testScale, err := NewScale("A", ScaleHarmonicMinor)
+		expectedScale := harmonicMinorScale{scale{
+			root:  Note{value: "A"},
+			notes: []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G#"}},
+		}}
 
 		assert.NoError(t, err)
-		assert.Equal(t, expectedNotes, scale.notes)
+		assert.Equal(t, expectedScale, testScale)
 	})
 }
 
