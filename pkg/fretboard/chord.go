@@ -1,5 +1,14 @@
 package fretboard
 
+import "fmt"
+
+var (
+	intervalsMajor7          = []uint{4, 7, 11}
+	intervalsMinor7          = []uint{3, 7, 10}
+	intervalsDominant7       = []uint{4, 7, 10}
+	intervalsHalfDiminished7 = []uint{3, 6, 10}
+)
+
 type Chord struct {
 	root      Note
 	intervals []uint
@@ -14,4 +23,36 @@ func (c Chord) Notes() []Note {
 	}
 
 	return notes
+}
+
+func (c Chord) Name() string {
+	var suffix string
+	switch {
+	case c.compareIntervals(intervalsMajor7...):
+		suffix = "maj7"
+	case c.compareIntervals(intervalsMinor7...):
+		suffix = "min7"
+	case c.compareIntervals(intervalsDominant7...):
+		suffix = "7"
+	case c.compareIntervals(intervalsHalfDiminished7...):
+		suffix = "min7b5"
+	default:
+		suffix = ""
+	}
+
+	return fmt.Sprintf("%s%s", c.root, suffix)
+}
+
+func (c Chord) compareIntervals(intervals ...uint) bool {
+	if len(c.intervals) != len(intervals) {
+		return false
+	}
+
+	for i := range c.intervals {
+		if c.intervals[i] != intervals[i] {
+			return false
+		}
+	}
+
+	return true
 }
