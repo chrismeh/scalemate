@@ -72,6 +72,33 @@ func (m majorScale) Name() string {
 	return fmt.Sprintf("%s %s", m.root, ScaleMajor)
 }
 
+func (m majorScale) Chords() []Chord {
+	chords := make([]Chord, len(m.notes))
+	for i, n := range m.notes {
+		chords[i] = Chord{root: n, intervals: m.buildChordIntervals(n)}
+	}
+	return chords
+}
+
+func (m majorScale) buildChordIntervals(note Note) []uint {
+	numberOfThirds := 3
+	var addedIntervals uint
+
+	intervals := make([]uint, numberOfThirds)
+	for i := 0; i < numberOfThirds; i++ {
+		var interval uint = 3
+		if m.Contains(note.Add(4)) {
+			interval = 4
+		}
+
+		note = note.Add(interval)
+		addedIntervals += interval
+		intervals[i] = addedIntervals
+	}
+
+	return intervals
+}
+
 type harmonicMinorScale struct {
 	scale
 }

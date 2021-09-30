@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+func TestMajorScale_Chords(t *testing.T) {
+	scale := newMajorScale(Note{value: "C"})
+	chords := scale.Chords()
+
+	assert.Equal(t, "Cmaj7", chords[0].Name())
+	assert.Equal(t, "Dmin7", chords[1].Name())
+	assert.Equal(t, "Emin7", chords[2].Name())
+	assert.Equal(t, "Fmaj7", chords[3].Name())
+	assert.Equal(t, "G7", chords[4].Name())
+	assert.Equal(t, "Amin7", chords[5].Name())
+	assert.Equal(t, "Bmin7b5", chords[6].Name())
+}
+
 func TestScale_Root(t *testing.T) {
 	scale, _ := NewScale("A", ScaleMinor)
 	assert.Equal(t, Note{value: "A"}, scale.Root())
