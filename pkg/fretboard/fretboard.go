@@ -61,7 +61,7 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 }
 
 func (f *Fretboard) String() string {
-	if title := f.Scale.Title(); title != "" {
+	if title := f.Scale.Name(); title != "" {
 		return title
 	}
 

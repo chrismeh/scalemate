@@ -55,7 +55,7 @@ func TestFretboard_String(t *testing.T) {
 		fb, _ := New(Options{})
 		fb.HighlightScale(scale)
 
-		assert.Equal(t, scale.Title(), fb.String())
+		assert.Equal(t, scale.Name(), fb.String())
 	})
 
 	t.Run("return a default title if no scale has been set", func(t *testing.T) {

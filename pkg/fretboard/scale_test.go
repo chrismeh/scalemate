@@ -25,7 +25,7 @@ func TestScale_Contains(t *testing.T) {
 func TestScale_Title(t *testing.T) {
 	scale, _ := NewScale("A", ScaleMinor)
 
-	assert.Equal(t, "A minor", scale.Title())
+	assert.Equal(t, "A minor", scale.Name())
 }
 
 func TestNewScale(t *testing.T) {

@@ -15,7 +15,7 @@ var (
 )
 
 type Scale interface {
-	Title() string
+	Name() string
 	Root() Note
 	Contains(Note) bool
 }
@@ -51,8 +51,8 @@ func newMinorScale(root Note) minorScale {
 	}
 }
 
-func (m minorScale) Title() string {
-	return fmt.Sprintf("%s minor", m.root)
+func (m minorScale) Name() string {
+	return fmt.Sprintf("%s %s", m.root, ScaleMinor)
 }
 
 type majorScale struct {
@@ -68,8 +68,8 @@ func newMajorScale(root Note) majorScale {
 	}
 }
 
-func (m majorScale) Title() string {
-	return fmt.Sprintf("%s major", m.root)
+func (m majorScale) Name() string {
+	return fmt.Sprintf("%s %s", m.root, ScaleMajor)
 }
 
 type harmonicMinorScale struct {
@@ -85,14 +85,14 @@ func newHarmonicMinorScale(root Note) harmonicMinorScale {
 	}
 }
 
-func (m harmonicMinorScale) Title() string {
-	return fmt.Sprintf("%s major", m.root)
+func (m harmonicMinorScale) Name() string {
+	return fmt.Sprintf("%s %s", m.root, ScaleHarmonicMinor)
 }
 
 type emptyScale struct {
 }
 
-func (e emptyScale) Title() string {
+func (e emptyScale) Name() string {
 	return ""
 }
 
