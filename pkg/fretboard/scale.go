@@ -5,9 +5,8 @@ import (
 )
 
 const (
-	ScaleMinor         string = "minor"
-	ScaleHarmonicMinor        = "harmonic minor"
-	ScaleMajor                = "major"
+	ScaleMinor string = "minor"
+	ScaleMajor        = "major"
 )
 
 var (
@@ -31,8 +30,6 @@ func NewScale(rootNote string, scaleType string) (Scale, error) {
 		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 10)}, nil
 	case ScaleMajor:
 		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 4, 5, 7, 9, 11)}, nil
-	case ScaleHarmonicMinor:
-		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 11)}, nil
 	default:
 		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
 	}

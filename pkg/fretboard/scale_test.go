@@ -90,18 +90,6 @@ func TestNewScale(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, expectedScale, testScale)
 	})
-
-	t.Run("build correct harmonic minor scale", func(t *testing.T) {
-		testScale, err := NewScale("A", ScaleHarmonicMinor)
-		expectedScale := Scale{
-			Root:      Note{value: "A"},
-			notes:     []Note{{value: "A"}, {value: "B"}, {value: "C"}, {value: "D"}, {value: "E"}, {value: "F"}, {value: "G#"}},
-			scaleType: ScaleHarmonicMinor,
-		}
-
-		assert.NoError(t, err)
-		assert.Equal(t, expectedScale, testScale)
-	})
 }
 
 func TestNewNote(t *testing.T) {
