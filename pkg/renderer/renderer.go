@@ -168,7 +168,7 @@ func (p PNGRenderer) drawHighlightedNotes() error {
 
 func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	switch {
-	case p.fb.Scale.Root() == note:
+	case p.fb.Scale.Root == note:
 		p.dc.SetColor(colornames.Lightblue)
 	case p.fb.Scale.Contains(note):
 		p.dc.SetColor(colornames.Black)

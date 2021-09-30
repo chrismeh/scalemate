@@ -37,7 +37,7 @@ func New(options Options) (*Fretboard, error) {
 		Strings: options.Tuning.Strings(),
 		Frets:   options.Frets,
 		strings: buildStringsFromTuning(options.Tuning),
-		Scale:   emptyScale{},
+		Scale:   Scale{},
 	}
 	return &f, nil
 }
@@ -56,7 +56,7 @@ func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
 		Number:      fret,
 		Note:        note,
 		Highlighted: f.Scale.Contains(note),
-		Root:        note == f.Scale.Root(),
+		Root:        note == f.Scale.Root,
 	}, nil
 }
 

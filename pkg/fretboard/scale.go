@@ -14,22 +14,39 @@ var (
 	notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 )
 
-type Scale interface {
-	Name() string
-	Root() Note
-	Contains(Note) bool
+type Scale struct {
+	Root      Note
+	notes     []Note
+	scaleType string
 }
 
-type scale struct {
-	root  Note
-	notes []Note
+func NewScale(rootNote string, scaleType string) (Scale, error) {
+	root, err := NewNote(rootNote)
+	if err != nil {
+		return Scale{}, err
+	}
+
+	switch scaleType {
+	case ScaleMinor:
+		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 10)}, nil
+	case ScaleMajor:
+		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 4, 5, 7, 9, 11)}, nil
+	case ScaleHarmonicMinor:
+		return Scale{Root: root, scaleType: scaleType, notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 11)}, nil
+	default:
+		return Scale{}, fmt.Errorf("scale type %s is not supported", scaleType)
+	}
 }
 
-func (s scale) Root() Note {
-	return s.root
+func (s Scale) Name() string {
+	if s.scaleType == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("%s %s", s.Root, s.scaleType)
 }
 
-func (s scale) Contains(note Note) bool {
+func (s Scale) Contains(note Note) bool {
 	for _, n := range s.notes {
 		if n == note {
 			return true
@@ -38,56 +55,22 @@ func (s scale) Contains(note Note) bool {
 	return false
 }
 
-type minorScale struct {
-	scale
-}
-
-func newMinorScale(root Note) minorScale {
-	return minorScale{
-		scale{
-			root:  root,
-			notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 10),
-		},
-	}
-}
-
-func (m minorScale) Name() string {
-	return fmt.Sprintf("%s %s", m.root, ScaleMinor)
-}
-
-type majorScale struct {
-	scale
-}
-
-func newMajorScale(root Note) majorScale {
-	return majorScale{
-		scale{
-			root:  root,
-			notes: buildScaleNotes(root, 2, 4, 5, 7, 9, 11),
-		},
-	}
-}
-
-func (m majorScale) Name() string {
-	return fmt.Sprintf("%s %s", m.root, ScaleMajor)
-}
-
-func (m majorScale) Chords() []Chord {
-	chords := make([]Chord, len(m.notes))
-	for i, n := range m.notes {
-		chords[i] = Chord{root: n, intervals: m.buildChordIntervals(n)}
+func (s Scale) Chords() []Chord {
+	chords := make([]Chord, len(s.notes))
+	for i, n := range s.notes {
+		chords[i] = Chord{root: n, intervals: s.buildChordIntervals(n)}
 	}
 	return chords
 }
 
-func (m majorScale) buildChordIntervals(note Note) []uint {
+func (s Scale) buildChordIntervals(note Note) []uint {
 	numberOfThirds := 3
 	var addedIntervals uint
 
 	intervals := make([]uint, numberOfThirds)
 	for i := 0; i < numberOfThirds; i++ {
 		var interval uint = 3
-		if m.Contains(note.Add(4)) {
+		if s.Contains(note.Add(4)) {
 			interval = 4
 		}
 
@@ -97,56 +80,6 @@ func (m majorScale) buildChordIntervals(note Note) []uint {
 	}
 
 	return intervals
-}
-
-type harmonicMinorScale struct {
-	scale
-}
-
-func newHarmonicMinorScale(root Note) harmonicMinorScale {
-	return harmonicMinorScale{
-		scale{
-			root:  root,
-			notes: buildScaleNotes(root, 2, 3, 5, 7, 8, 11),
-		},
-	}
-}
-
-func (m harmonicMinorScale) Name() string {
-	return fmt.Sprintf("%s %s", m.root, ScaleHarmonicMinor)
-}
-
-type emptyScale struct {
-}
-
-func (e emptyScale) Name() string {
-	return ""
-}
-
-func (e emptyScale) Root() Note {
-	return Note{value: ""}
-}
-
-func (e emptyScale) Contains(_ Note) bool {
-	return false
-}
-
-func NewScale(rootNote string, scaleType string) (Scale, error) {
-	root, err := NewNote(rootNote)
-	if err != nil {
-		return emptyScale{}, err
-	}
-
-	switch scaleType {
-	case ScaleMinor:
-		return newMinorScale(root), nil
-	case ScaleMajor:
-		return newMajorScale(root), nil
-	case ScaleHarmonicMinor:
-		return newHarmonicMinorScale(root), nil
-	default:
-		return emptyScale{}, fmt.Errorf("scale type %s is not supported", scaleType)
-	}
 }
 
 type Note struct {
