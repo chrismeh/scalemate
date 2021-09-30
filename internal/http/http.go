@@ -41,7 +41,7 @@ func NewApplication(addr string, embeddedFiles embed.FS) (Application, error) {
 
 	router := http.NewServeMux()
 	router.HandleFunc("/", app.handleGetIndex)
-	router.HandleFunc("/scale", app.handleGetScale)
+	router.HandleFunc("/api/scale", app.handleGetScale)
 	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFiles))))
 	app.server.Handler = router
 

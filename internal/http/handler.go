@@ -1,6 +1,9 @@
 package http
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
 	"github.com/chrismeh/scalemate/pkg/fretboard"
 	"github.com/chrismeh/scalemate/pkg/renderer"
 	"io"
@@ -59,8 +62,21 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	options := renderer.PNGOptions{FretboardOffsetX: 0, FretboardOffsetY: 40.0, DrawTitle: false}
 	png := renderer.NewPNGRenderer(fb, options)
 
-	w.Header().Add("content-type", "image/png")
-	err = png.Render(w)
+	var buf bytes.Buffer
+	err = png.Render(&buf)
+	if err != nil {
+		a.internalServerError(err, w)
+		return
+	}
+
+	resp := struct {
+		Picture string `json:"picture"`
+	}{
+		Picture: base64.StdEncoding.EncodeToString(buf.Bytes()),
+	}
+
+	w.Header().Add("content-type", "application/json")
+	err = json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		a.internalServerError(err, w)
 		return

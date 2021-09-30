@@ -6,7 +6,7 @@
     <title>scalemate</title>
     <link rel="stylesheet" href="/static/bulma.min.css">
 </head>
-<body>
+<body onload="updateImageSRC()">
 <section class="section">
     <div class="container is-max-desktop content">
         <h1 class="has-text-primary">scalemate</h1>
@@ -79,7 +79,7 @@
             </div>
         </div>
         <div>
-            <img id="scale-image" src="/scale" alt="a guitar scale">
+            <img id="scale-image" src="" alt="a guitar scale">
         </div>
     </div>
 </section>
