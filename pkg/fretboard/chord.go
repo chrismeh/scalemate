@@ -12,9 +12,24 @@ var (
 type Chord struct {
 	root      Note
 	intervals []uint
+	notes     []Note
 }
 
-func (c Chord) Notes() []Note {
+func (c *Chord) Contains(n Note) bool {
+	if len(c.notes) == 0 {
+		c.notes = c.buildNotes()
+	}
+
+	for _, note := range c.notes {
+		if note == n {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *Chord) buildNotes() []Note {
 	notes := make([]Note, len(c.intervals)+1)
 	notes[0] = c.root
 
@@ -25,7 +40,7 @@ func (c Chord) Notes() []Note {
 	return notes
 }
 
-func (c Chord) Name() string {
+func (c *Chord) Name() string {
 	var suffix string
 	switch {
 	case c.compareIntervals(intervalsMajor7...):
@@ -43,7 +58,7 @@ func (c Chord) Name() string {
 	return fmt.Sprintf("%s%s", c.root, suffix)
 }
 
-func (c Chord) compareIntervals(intervals ...uint) bool {
+func (c *Chord) compareIntervals(intervals ...uint) bool {
 	if len(c.intervals) != len(intervals) {
 		return false
 	}
