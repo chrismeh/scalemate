@@ -5,6 +5,27 @@ import (
 	"testing"
 )
 
+func TestParseChord(t *testing.T) {
+	root := Note{value: "C"}
+	t.Run("return correct chord for valid name", func(t *testing.T) {
+		tests := []struct {
+			Name          string
+			ChordName     string
+			ExpectedChord Chord
+		}{
+			{"major 7", "Cmaj7", NewChord(root, intervalsMajor7...)},
+			{"minor 7", "Cmin7", NewChord(root, intervalsMinor7...)},
+			{"dominant 7", "C7", NewChord(root, intervalsDominant7...)},
+			{"half diminished 7", "Cmin7b5", NewChord(root, intervalsHalfDiminished7...)},
+		}
+
+		for _, tt := range tests {
+			c, _ := ParseChord(tt.ChordName)
+			assert.Equal(t, tt.ExpectedChord, c)
+		}
+	})
+}
+
 func TestNewChord(t *testing.T) {
 	root := Note{value: "C"}
 
