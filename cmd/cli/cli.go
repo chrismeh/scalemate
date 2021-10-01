@@ -11,6 +11,7 @@ import (
 
 func main() {
 	scaleFlag := flag.String("scale", "A minor", "Scale you want to generate")
+	chordFlag := flag.String("chord", "", "Chord you want to highlight (e. g. Amin7)")
 	tuningFlag := flag.String("tuning", "E A D G B E", "Guitar/bass tuning, notes separated by a whitespace")
 	fretsFlag := flag.Uint("frets", 12, "Number of frets on the neck")
 	fileFlag := flag.String("file", "scale.png", "Filename for saving the PNG")
@@ -31,6 +32,14 @@ func main() {
 		exitWithError(err)
 	}
 	fb.HighlightScale(scale)
+
+	if *chordFlag != "" {
+		chord, err := fretboard.ParseChord(*chordFlag)
+		if err != nil {
+			exitWithError(err)
+		}
+		fb.HighlightChord(chord)
+	}
 
 	f, err := os.Create(*fileFlag)
 	if err != nil {

@@ -13,6 +13,8 @@ go build -o=./bin/scalemate-web ./cmd/web
 
 $ bin/scalemate-cli --help
 Usage of bin/scalemate-cli:
+  -chord string
+        Chord you want to highlight (e. g. Amin7)
   -file string
         Filename for saving the PNG (default "scale.png")
   -frets uint
