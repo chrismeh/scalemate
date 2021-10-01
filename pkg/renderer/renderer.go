@@ -170,6 +170,8 @@ func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	switch {
 	case p.fb.Scale.Root == note:
 		p.dc.SetColor(colornames.Lightblue)
+	case p.fb.Chord.Contains(note):
+		p.dc.SetColor(colornames.Lightgreen)
 	case p.fb.Scale.Contains(note):
 		p.dc.SetColor(colornames.Black)
 	default:
