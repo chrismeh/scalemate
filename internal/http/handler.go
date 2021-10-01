@@ -38,29 +38,12 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	request := parseGetScaleRequest(r)
-
-	tuning, err := fretboard.NewTuning(request.tuning)
-	if err != nil {
-		a.badRequest(err, w)
-		return
-	}
-
-	fb, err := fretboard.New(fretboard.Options{Frets: request.frets, Tuning: tuning})
-	if err != nil {
-		a.badRequest(err, w)
-		return
-	}
-
-	scale, err := fretboard.NewScale(request.rootNote, request.scaleType)
-	if err != nil {
-		a.badRequest(err, w)
-		return
-	}
-	fb.HighlightScale(scale)
+	fb, err := buildFretboard(request)
 
 	chords := make([]string, 0, 8)
-	for _, c := range scale.Chords() {
+	for _, c := range fb.Scale.Chords() {
 		chords = append(chords, c.Name)
 	}
 
@@ -95,6 +78,7 @@ type getScaleRequest struct {
 	scaleType string
 	tuning    string
 	frets     uint
+	chord     string
 }
 
 func parseGetScaleRequest(r *http.Request) getScaleRequest {
@@ -103,6 +87,7 @@ func parseGetScaleRequest(r *http.Request) getScaleRequest {
 		scaleType: fretboard.ScaleMinor,
 		tuning:    fretboard.TuningStandard,
 		frets:     12,
+		chord:     "",
 	}
 
 	query := r.URL.Query()
@@ -121,6 +106,38 @@ func parseGetScaleRequest(r *http.Request) getScaleRequest {
 			req.frets = uint(numberOfFrets)
 		}
 	}
+	if chord := query.Get("chord"); chord != "" {
+		req.chord = chord
+	}
 
 	return req
+}
+
+func buildFretboard(request getScaleRequest) (*fretboard.Fretboard, error) {
+	tuning, err := fretboard.NewTuning(request.tuning)
+	if err != nil {
+		return nil, err
+	}
+
+	fb, err := fretboard.New(fretboard.Options{Frets: request.frets, Tuning: tuning})
+	if err != nil {
+		return nil, err
+	}
+
+	scale, err := fretboard.NewScale(request.rootNote, request.scaleType)
+	if err != nil {
+		return nil, err
+	}
+	fb.HighlightScale(scale)
+
+	if request.chord != "" {
+		chord, err := fretboard.ParseChord(request.chord)
+		if err != nil {
+			return nil, err
+		}
+
+		fb.HighlightChord(chord)
+	}
+
+	return fb, nil
 }
