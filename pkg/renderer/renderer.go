@@ -6,10 +6,13 @@ import (
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/gofont/goregular"
+	"image/color"
 	"image/png"
 	"io"
 	"strconv"
 )
+
+var colorSunray = color.RGBA{R: 0xea, G: 0xb4, B: 0x64, A: 0xff}
 
 type PNGRenderer struct {
 	dc            *gg.Context
@@ -171,7 +174,7 @@ func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	case p.fb.Scale.Root == note:
 		p.dc.SetColor(colornames.Lightblue)
 	case p.fb.Chord.Contains(note):
-		p.dc.SetColor(colornames.Red)
+		p.dc.SetColor(colorSunray)
 	case p.fb.Scale.Contains(note):
 		p.dc.SetColor(colornames.Black)
 	default:
