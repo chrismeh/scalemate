@@ -59,6 +59,11 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	}
 	fb.HighlightScale(scale)
 
+	chords := make([]string, 0, 8)
+	for _, c := range scale.Chords() {
+		chords = append(chords, c.Name)
+	}
+
 	options := renderer.PNGOptions{FretboardOffsetX: 0, FretboardOffsetY: 40.0, DrawTitle: false}
 	png := renderer.NewPNGRenderer(fb, options)
 
@@ -70,9 +75,11 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := struct {
-		Picture string `json:"picture"`
+		Picture string   `json:"picture"`
+		Chords  []string `json:"chords"`
 	}{
 		Picture: base64.StdEncoding.EncodeToString(buf.Bytes()),
+		Chords:  chords,
 	}
 
 	w.Header().Add("content-type", "application/json")
