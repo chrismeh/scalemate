@@ -1,14 +1,23 @@
-function updateImageSRC() {
+function sendScaleRequest(updateChordSelector) {
     const root = encodeURIComponent(document.getElementById("root").value);
     const scale = encodeURIComponent(document.getElementById("scale").value);
     const tuning = encodeURIComponent(document.getElementById("tuning").value);
-    const chord = encodeURIComponent(document.getElementById("chord").value);
-    const url = "/api/scale?root=" + root + "&type=" + scale + "&tuning=" + tuning + "&chord=" + chord;
+
+    let url = "/api/scale?root=" + root + "&type=" + scale + "&tuning=" + tuning;
+
+    let chord = document.getElementById("chord").value
+    if (chord !== "-") {
+        url += "&chord=" + encodeURIComponent(chord);
+    }
 
     fetch(url)
         .then(resp => resp.json())
         .then(json => {
             document.getElementById("scale-image").src = `data:image/png;base64,${json.picture}`;
+
+            if (!updateChordSelector) {
+                return;
+            }
 
             let chordSelect = document.getElementById("chord")
             while (chordSelect.options.length > 0) {
