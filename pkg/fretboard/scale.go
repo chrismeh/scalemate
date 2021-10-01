@@ -52,10 +52,10 @@ func (s Scale) Contains(note Note) bool {
 	return false
 }
 
-func (s Scale) Chords() []*Chord {
-	chords := make([]*Chord, len(s.notes))
+func (s Scale) Chords() []Chord {
+	chords := make([]Chord, len(s.notes))
 	for i, n := range s.notes {
-		chords[i] = &Chord{root: n, intervals: s.buildChordIntervals(n)}
+		chords[i] = NewChord(n, s.buildChordIntervals(n)...)
 	}
 	return chords
 }

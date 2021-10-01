@@ -5,60 +5,46 @@ import (
 	"testing"
 )
 
-func TestChord_Contains(t *testing.T) {
-	c := &Chord{root: Note{value: "C"}, intervals: intervalsMajor7}
+func TestNewChord(t *testing.T) {
+	root := Note{value: "C"}
 
-	assert.True(t, c.Contains(Note{value: "C"}))
-	assert.True(t, c.Contains(Note{value: "E"}))
-	assert.True(t, c.Contains(Note{value: "G"}))
-	assert.True(t, c.Contains(Note{value: "B"}))
-}
+	t.Run("set correct name for each chord", func(t *testing.T) {
+		tests := []struct {
+			Name         string
+			Intervals    []uint
+			ExpectedName string
+		}{
+			{Name: "major 7", Intervals: intervalsMajor7, ExpectedName: "Cmaj7"},
+			{Name: "minor 7", Intervals: intervalsMinor7, ExpectedName: "Cmin7"},
+			{Name: "dominant 7", Intervals: intervalsDominant7, ExpectedName: "C7"},
+			{Name: "half diminished 7", Intervals: intervalsHalfDiminished7, ExpectedName: "Cmin7b5"},
+		}
 
-func TestChord_Name(t *testing.T) {
-	root := Note{value: "B"}
-
-	tests := []struct {
-		Name              string
-		Intervals         []uint
-		ExpectedChordName string
-	}{
-		{Name: "major 7", Intervals: intervalsMajor7, ExpectedChordName: "Bmaj7"},
-		{Name: "minor 7", Intervals: intervalsMinor7, ExpectedChordName: "Bmin7"},
-		{Name: "dominant 7", Intervals: intervalsDominant7, ExpectedChordName: "B7"},
-		{Name: "half-diminished 7", Intervals: intervalsHalfDiminished7, ExpectedChordName: "Bmin7b5"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			c := Chord{root: root, intervals: tt.Intervals}
-			assert.Equal(t, tt.ExpectedChordName, c.Name())
-		})
-	}
-}
-
-func TestChord_buildNotes(t *testing.T) {
-	t.Run("return root note without any intervals", func(t *testing.T) {
-		root := Note{value: "C"}
-		c := Chord{root: root, intervals: []uint{}}
-		notes := c.buildNotes()
-
-		assert.Len(t, notes, 1)
-		assert.Equal(t, root, notes[0])
+		for _, tt := range tests {
+			c := NewChord(root, tt.Intervals...)
+			assert.Equal(t, tt.ExpectedName, c.Name)
+		}
 	})
 
-	t.Run("return correct notes with a single interval", func(t *testing.T) {
-		root := Note{value: "C"}
-		c := Chord{root: root, intervals: []uint{4}}
-		notes := c.buildNotes()
+	t.Run("set correct notes for each chord", func(t *testing.T) {
+		tests := []struct {
+			Name          string
+			Intervals     []uint
+			ExpectedNotes []string
+		}{
+			{Name: "major 7", Intervals: intervalsMajor7, ExpectedNotes: []string{"C", "E", "G", "B"}},
+			{Name: "minor 7", Intervals: intervalsMinor7, ExpectedNotes: []string{"C", "D#", "G", "A#"}},
+			{Name: "dominant 7", Intervals: intervalsDominant7, ExpectedNotes: []string{"C", "E", "G", "A#"}},
+			{Name: "half diminished 7", Intervals: intervalsHalfDiminished7, ExpectedNotes: []string{"C", "D#", "F#", "A#"}},
+		}
 
-		assert.Equal(t, []Note{{value: "C"}, {value: "E"}}, notes)
-	})
-
-	t.Run("return correct notes with multiple intervals", func(t *testing.T) {
-		root := Note{value: "C"}
-		c := Chord{root: root, intervals: []uint{4, 7, 11}}
-		notes := c.buildNotes()
-
-		assert.Equal(t, []Note{{value: "C"}, {value: "E"}, {value: "G"}, {value: "B"}}, notes)
+		for _, tt := range tests {
+			t.Run(tt.Name, func(t *testing.T) {
+				c := NewChord(root, tt.Intervals...)
+				for _, n := range tt.ExpectedNotes {
+					assert.True(t, c.Contains(Note{value: n}))
+				}
+			})
+		}
 	})
 }
