@@ -15,6 +15,7 @@ type Fretboard struct {
 	Strings uint
 	Frets   uint
 	Scale   Scale
+	Chord   Chord
 	strings []guitarString
 }
 
@@ -44,6 +45,10 @@ func New(options Options) (*Fretboard, error) {
 
 func (f *Fretboard) HighlightScale(s Scale) {
 	f.Scale = s
+}
+
+func (f *Fretboard) HighlightChord(c Chord) {
+	f.Chord = c
 }
 
 func (f *Fretboard) Fret(string, fret uint) (Fret, error) {
