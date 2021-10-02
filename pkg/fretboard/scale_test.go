@@ -106,6 +106,20 @@ func TestNewNote(t *testing.T) {
 	})
 }
 
+func TestNote_Equals(t *testing.T) {
+	t.Run("return true when both notes have the same value", func(t *testing.T) {
+		a, b := Note{value: "C"}, Note{value: "C"}
+
+		assert.True(t, a.Equals(b))
+	})
+
+	t.Run("return false when notes have different values", func(t *testing.T) {
+		a, b := Note{value: "C"}, Note{value: "C#"}
+
+		assert.False(t, a.Equals(b))
+	})
+}
+
 func TestNote_Add(t *testing.T) {
 	tests := []struct {
 		Name         string

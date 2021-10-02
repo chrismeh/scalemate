@@ -45,7 +45,7 @@ func (s Scale) Name() string {
 
 func (s Scale) Contains(note Note) bool {
 	for _, n := range s.notes {
-		if n == note {
+		if n.Equals(note) {
 			return true
 		}
 	}
@@ -91,6 +91,10 @@ func NewNote(value string) (Note, error) {
 	}
 
 	return Note{}, fmt.Errorf("note does not exist: %s", value)
+}
+
+func (n Note) Equals(other Note) bool {
+	return n.value == other.value
 }
 
 func (n Note) Add(halfsteps uint) Note {
