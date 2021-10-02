@@ -12,7 +12,12 @@ import (
 	"strconv"
 )
 
-var colorSunray = color.RGBA{R: 0xea, G: 0xb4, B: 0x64, A: 0xff}
+var (
+	colorRootNote  = color.RGBA{R: 0x00, G: 0xd1, B: 0xb2, A: 0xff}
+	colorChordNote = color.RGBA{R: 0x98, G: 0x36, B: 0x28, A: 0xff}
+	colorScaleNote = color.RGBA{R: 0x08, G: 0x09, B: 0x0a, A: 0xff}
+	colorMiscNote  = color.RGBA{R: 0xa4, G: 0x96, B: 0x9b, A: 0xff}
+)
 
 type PNGRenderer struct {
 	dc            *gg.Context
@@ -172,13 +177,13 @@ func (p PNGRenderer) drawHighlightedNotes() error {
 func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	switch {
 	case p.fb.Scale.Root == note:
-		p.dc.SetColor(colornames.Lightblue)
+		p.dc.SetColor(colorRootNote)
 	case p.fb.Chord.Contains(note):
-		p.dc.SetColor(colorSunray)
+		p.dc.SetColor(colorChordNote)
 	case p.fb.Scale.Contains(note):
-		p.dc.SetColor(colornames.Black)
+		p.dc.SetColor(colorScaleNote)
 	default:
-		p.dc.SetColor(colornames.Grey)
+		p.dc.SetColor(colorMiscNote)
 	}
 	p.dc.DrawCircle(x, y, 10)
 	p.dc.Fill()
