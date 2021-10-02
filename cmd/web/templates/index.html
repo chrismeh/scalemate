@@ -34,6 +34,26 @@
             </div>
             <div class="field is-horizontal">
                 <div class="field-label is-normal has-text-left">
+                    <label class="label" for="frets">Frets:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <div class="select">
+                                <select id="frets" onchange="sendScaleRequest(false)">
+                                    <option value="12">12</option>
+                                    <option value="15" selected>15</option>
+                                    <option value="22">22</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal has-text-left">
                     <label class="label" for="root">Scale:</label>
                 </div>
                 <div class="field-body">
