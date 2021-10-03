@@ -146,3 +146,31 @@ func TestNote_Add(t *testing.T) {
 		})
 	}
 }
+
+func TestNote_IntervalTo(t *testing.T) {
+	tests := []struct {
+		Name             string
+		FirstNoteValue   string
+		SecondNoteValue  string
+		ExpectedInterval uint
+	}{
+		{Name: "perfect unison for equal notes", FirstNoteValue: "G", SecondNoteValue: "G", ExpectedInterval: 1},
+		{Name: "second for a single semitone", FirstNoteValue: "G", SecondNoteValue: "G#", ExpectedInterval: 2},
+		{Name: "second for two semitones", FirstNoteValue: "G", SecondNoteValue: "A", ExpectedInterval: 2},
+		{Name: "third for three semitones", FirstNoteValue: "G", SecondNoteValue: "A#", ExpectedInterval: 3},
+		{Name: "third for four semitones", FirstNoteValue: "G", SecondNoteValue: "B", ExpectedInterval: 3},
+		{Name: "perfect fourth for five semitones", FirstNoteValue: "G", SecondNoteValue: "C", ExpectedInterval: 4},
+		{Name: "perfect fifth for seven semitones", FirstNoteValue: "G", SecondNoteValue: "D", ExpectedInterval: 5},
+		{Name: "sixth for eight semitones", FirstNoteValue: "G", SecondNoteValue: "D#", ExpectedInterval: 6},
+		{Name: "sixth for nine semitones", FirstNoteValue: "G", SecondNoteValue: "E", ExpectedInterval: 6},
+		{Name: "seventh for ten semitones", FirstNoteValue: "G", SecondNoteValue: "F", ExpectedInterval: 7},
+		{Name: "seventh for nine semitones", FirstNoteValue: "G", SecondNoteValue: "F#", ExpectedInterval: 7},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			n1, n2 := Note{value: tt.FirstNoteValue}, Note{value: tt.SecondNoteValue}
+			assert.Equal(t, tt.ExpectedInterval, n1.IntervalTo(n2))
+		})
+	}
+}

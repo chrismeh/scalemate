@@ -101,14 +101,7 @@ func (n Note) Add(semitones uint) Note {
 	if semitones == 0 || semitones%12 == 0 {
 		return n
 	}
-
-	var currentNoteIndex uint = 0
-	for i, note := range notes {
-		if n.value == note {
-			currentNoteIndex = uint(i)
-			break
-		}
-	}
+	currentNoteIndex := findNoteIndex(n)
 
 	nextNoteIndex := currentNoteIndex + semitones
 	if int(nextNoteIndex) > 11 {
@@ -116,6 +109,36 @@ func (n Note) Add(semitones uint) Note {
 	}
 
 	return Note{value: notes[nextNoteIndex]}
+}
+
+func (n Note) IntervalTo(other Note) uint {
+	if n.Equals(other) {
+		return 1
+	}
+
+	currentNoteIndex := findNoteIndex(n)
+	otherNoteIndex := findNoteIndex(other)
+	semitones := int(otherNoteIndex) - int(currentNoteIndex)
+	if semitones < 0 {
+		semitones += 12
+	}
+
+	switch semitones {
+	case 1, 2:
+		return 2
+	case 3, 4:
+		return 3
+	case 5:
+		return 4
+	case 7:
+		return 5
+	case 8, 9:
+		return 6
+	case 10, 11:
+		return 7
+	}
+
+	return 0
 }
 
 func (n Note) String() string {
@@ -130,4 +153,14 @@ func buildScaleNotes(root Note, intervals ...uint) []Note {
 	}
 
 	return notes
+}
+
+func findNoteIndex(note Note) uint {
+	for i, n := range notes {
+		if n == note.value {
+			return uint(i)
+		}
+	}
+
+	panic(fmt.Sprintf("could not determine index for note %v", note))
 }
