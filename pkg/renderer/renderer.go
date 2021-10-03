@@ -12,6 +12,13 @@ import (
 	"strconv"
 )
 
+type TextDisplayMode uint
+
+const (
+	TextDisplayModeDefault TextDisplayMode = iota
+	TextDisplayModeIntervalRelativeToScale
+)
+
 var (
 	colorRootNote  = color.RGBA{R: 0x00, G: 0xd1, B: 0xb2, A: 0xff}
 	colorChordNote = color.RGBA{R: 0x98, G: 0x36, B: 0x28, A: 0xff}
@@ -34,6 +41,7 @@ type PNGOptions struct {
 	FretboardOffsetX float64
 	FretboardOffsetY float64
 	DrawTitle        bool
+	TextDisplayMode  TextDisplayMode
 }
 
 func NewPNGRenderer(fretboard *fretboard.Fretboard, options PNGOptions) PNGRenderer {
@@ -189,6 +197,15 @@ func (p PNGRenderer) drawNote(note fretboard.Note, x, y float64) {
 	p.dc.Fill()
 
 	p.dc.SetColor(colornames.White)
-	p.dc.DrawStringAnchored(note.String(), x, y-2, 0.5, 0.5)
+	p.dc.DrawStringAnchored(p.getNoteStringRepresentation(note), x, y-2, 0.5, 0.5)
 	p.dc.Stroke()
+}
+
+func (p PNGRenderer) getNoteStringRepresentation(n fretboard.Note) string {
+	switch p.options.TextDisplayMode {
+	case TextDisplayModeIntervalRelativeToScale:
+		return strconv.Itoa(int(p.fb.Scale.Root.IntervalTo(n)))
+	default:
+		return n.String()
+	}
 }
