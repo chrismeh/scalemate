@@ -17,6 +17,7 @@ type TextDisplayMode uint
 const (
 	TextDisplayModeDefault TextDisplayMode = iota
 	TextDisplayModeIntervalRelativeToScale
+	TextDisplayModeIntervalRelativeToChord
 )
 
 var (
@@ -205,6 +206,11 @@ func (p PNGRenderer) getNoteStringRepresentation(n fretboard.Note) string {
 	switch p.options.TextDisplayMode {
 	case TextDisplayModeIntervalRelativeToScale:
 		return strconv.Itoa(int(p.fb.Scale.Root.IntervalTo(n)))
+	case TextDisplayModeIntervalRelativeToChord:
+		if p.fb.Chord.Name != "" {
+			return strconv.Itoa(int(p.fb.Chord.Root.IntervalTo(n)))
+		}
+		return n.String()
 	default:
 		return n.String()
 	}

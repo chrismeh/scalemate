@@ -49,12 +49,14 @@ func ParseChord(name string) (Chord, error) {
 func NewChord(rootNote Note, intervals ...uint) Chord {
 	return Chord{
 		Name:  fmt.Sprintf("%s%s", rootNote, identifyChord(intervals)),
+		Root:  rootNote,
 		notes: buildChordNotes(rootNote, intervals...),
 	}
 }
 
 type Chord struct {
 	Name  string
+	Root  Note
 	notes []Note
 }
 
