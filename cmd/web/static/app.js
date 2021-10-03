@@ -3,8 +3,9 @@ function sendScaleRequest(updateChordSelector) {
     const scale = encodeURIComponent(document.getElementById("scale").value);
     const tuning = encodeURIComponent(document.getElementById("tuning").value);
     const frets = encodeURIComponent(document.getElementById("frets").value);
+    const displayMode = encodeURIComponent(document.getElementById("display-mode").value);
 
-    let url = `/api/scale?root=${root}&type=${scale}&tuning=${tuning}&frets=${frets}`
+    let url = `/api/scale?root=${root}&type=${scale}&tuning=${tuning}&frets=${frets}&displayMode=${displayMode}`
 
     let chord = document.getElementById("chord").value
     if (chord !== "-") {

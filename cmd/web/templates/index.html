@@ -30,6 +30,23 @@
                 <div class="mt-5">
                     <div class="field is-horizontal">
                         <div class="field-label is-normal has-text-left">
+                            <label class="label" for="display-mode">Display Mode:</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select">
+                                        <select id="display-mode" onchange="sendScaleRequest(false)">
+                                            <option value="0">Notes</option>
+                                            <option value="1">Intervals, relative to scale root</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal has-text-left">
                             <label class="label" for="tuning">Tuning:</label>
                         </div>
                         <div class="field-body">

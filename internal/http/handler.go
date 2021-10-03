@@ -47,7 +47,12 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 		chords = append(chords, c.Name)
 	}
 
-	options := renderer.PNGOptions{FretboardOffsetX: 0, FretboardOffsetY: 40.0, DrawTitle: false}
+	options := renderer.PNGOptions{
+		FretboardOffsetX: 0,
+		FretboardOffsetY: 40.0,
+		DrawTitle:        false,
+		TextDisplayMode:  request.displayMode,
+	}
 	png := renderer.NewPNGRenderer(fb, options)
 
 	var buf bytes.Buffer
@@ -74,20 +79,22 @@ func (a Application) handleGetScale(w http.ResponseWriter, r *http.Request) {
 }
 
 type getScaleRequest struct {
-	rootNote  string
-	scaleType string
-	tuning    string
-	frets     uint
-	chord     string
+	rootNote    string
+	scaleType   string
+	tuning      string
+	frets       uint
+	chord       string
+	displayMode renderer.TextDisplayMode
 }
 
 func parseGetScaleRequest(r *http.Request) getScaleRequest {
 	req := getScaleRequest{
-		rootNote:  "A",
-		scaleType: fretboard.ScaleMinor,
-		tuning:    fretboard.TuningStandard,
-		frets:     12,
-		chord:     "",
+		rootNote:    "A",
+		scaleType:   fretboard.ScaleMinor,
+		tuning:      fretboard.TuningStandard,
+		frets:       12,
+		chord:       "",
+		displayMode: renderer.TextDisplayModeDefault,
 	}
 
 	query := r.URL.Query()
@@ -108,6 +115,12 @@ func parseGetScaleRequest(r *http.Request) getScaleRequest {
 	}
 	if chord := query.Get("chord"); chord != "" {
 		req.chord = chord
+	}
+	if display := query.Get("displayMode"); display != "" {
+		displayMode, err := strconv.Atoi(display)
+		if err == nil && displayMode > 0 {
+			req.displayMode = renderer.TextDisplayMode(displayMode)
+		}
 	}
 
 	return req
