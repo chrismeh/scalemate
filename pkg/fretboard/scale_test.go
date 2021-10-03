@@ -152,19 +152,20 @@ func TestNote_IntervalTo(t *testing.T) {
 		Name             string
 		FirstNoteValue   string
 		SecondNoteValue  string
-		ExpectedInterval uint
+		ExpectedInterval string
 	}{
-		{Name: "perfect unison for equal notes", FirstNoteValue: "G", SecondNoteValue: "G", ExpectedInterval: 1},
-		{Name: "second for a single semitone", FirstNoteValue: "G", SecondNoteValue: "G#", ExpectedInterval: 2},
-		{Name: "second for two semitones", FirstNoteValue: "G", SecondNoteValue: "A", ExpectedInterval: 2},
-		{Name: "third for three semitones", FirstNoteValue: "G", SecondNoteValue: "A#", ExpectedInterval: 3},
-		{Name: "third for four semitones", FirstNoteValue: "G", SecondNoteValue: "B", ExpectedInterval: 3},
-		{Name: "perfect fourth for five semitones", FirstNoteValue: "G", SecondNoteValue: "C", ExpectedInterval: 4},
-		{Name: "perfect fifth for seven semitones", FirstNoteValue: "G", SecondNoteValue: "D", ExpectedInterval: 5},
-		{Name: "sixth for eight semitones", FirstNoteValue: "G", SecondNoteValue: "D#", ExpectedInterval: 6},
-		{Name: "sixth for nine semitones", FirstNoteValue: "G", SecondNoteValue: "E", ExpectedInterval: 6},
-		{Name: "seventh for ten semitones", FirstNoteValue: "G", SecondNoteValue: "F", ExpectedInterval: 7},
-		{Name: "seventh for nine semitones", FirstNoteValue: "G", SecondNoteValue: "F#", ExpectedInterval: 7},
+		{Name: "perfect unison for equal notes", FirstNoteValue: "G", SecondNoteValue: "G", ExpectedInterval: intervalPerfectUnison},
+		{Name: "minor second for a single semitone", FirstNoteValue: "G", SecondNoteValue: "G#", ExpectedInterval: intervalMinorSecond},
+		{Name: "major second for two semitones", FirstNoteValue: "G", SecondNoteValue: "A", ExpectedInterval: intervalMajorSecond},
+		{Name: "minor third for three semitones", FirstNoteValue: "G", SecondNoteValue: "A#", ExpectedInterval: intervalMinorThird},
+		{Name: "major third for four semitones", FirstNoteValue: "G", SecondNoteValue: "B", ExpectedInterval: intervalMajorThird},
+		{Name: "perfect fourth for five semitones", FirstNoteValue: "G", SecondNoteValue: "C", ExpectedInterval: intervalPerfectFourth},
+		{Name: "diminished fifth for 6 semitones", FirstNoteValue: "G", SecondNoteValue: "C#", ExpectedInterval: intervalDiminishedFifth},
+		{Name: "perfect fifth for seven semitones", FirstNoteValue: "G", SecondNoteValue: "D", ExpectedInterval: intervalPerfectFifth},
+		{Name: "minor sixth for eight semitones", FirstNoteValue: "G", SecondNoteValue: "D#", ExpectedInterval: intervalMinorSixth},
+		{Name: "major sixth for nine semitones", FirstNoteValue: "G", SecondNoteValue: "E", ExpectedInterval: intervalMajorSixth},
+		{Name: "minor seventh for ten semitones", FirstNoteValue: "G", SecondNoteValue: "F", ExpectedInterval: intervalMinorSeventh},
+		{Name: "major seventh for nine semitones", FirstNoteValue: "G", SecondNoteValue: "F#", ExpectedInterval: intervalMajorSeventh},
 	}
 
 	for _, tt := range tests {

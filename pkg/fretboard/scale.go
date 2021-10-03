@@ -10,7 +10,19 @@ const (
 )
 
 var (
-	notes = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
+	notes                   = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
+	intervalPerfectUnison   = "1"
+	intervalMinorSecond     = "m2"
+	intervalMajorSecond     = "2"
+	intervalMinorThird      = "m3"
+	intervalMajorThird      = "3"
+	intervalPerfectFourth   = "4"
+	intervalDiminishedFifth = "b5"
+	intervalPerfectFifth    = "5"
+	intervalMinorSixth      = "m6"
+	intervalMajorSixth      = "6"
+	intervalMinorSeventh    = "m7"
+	intervalMajorSeventh    = "7"
 )
 
 type Scale struct {
@@ -111,9 +123,9 @@ func (n Note) Add(semitones uint) Note {
 	return Note{value: notes[nextNoteIndex]}
 }
 
-func (n Note) IntervalTo(other Note) uint {
+func (n Note) IntervalTo(other Note) string {
 	if n.Equals(other) {
-		return 1
+		return intervalPerfectUnison
 	}
 
 	currentNoteIndex := findNoteIndex(n)
@@ -124,21 +136,31 @@ func (n Note) IntervalTo(other Note) uint {
 	}
 
 	switch semitones {
-	case 1, 2:
-		return 2
-	case 3, 4:
-		return 3
+	case 1:
+		return intervalMinorSecond
+	case 2:
+		return intervalMajorSecond
+	case 3:
+		return intervalMinorThird
+	case 4:
+		return intervalMajorThird
 	case 5:
-		return 4
+		return intervalPerfectFourth
+	case 6:
+		return intervalDiminishedFifth
 	case 7:
-		return 5
-	case 8, 9:
-		return 6
-	case 10, 11:
-		return 7
+		return intervalPerfectFifth
+	case 8:
+		return intervalMinorSixth
+	case 9:
+		return intervalMajorSixth
+	case 10:
+		return intervalMinorSeventh
+	case 11:
+		return intervalMajorSeventh
 	}
 
-	return 0
+	return ""
 }
 
 func (n Note) String() string {
