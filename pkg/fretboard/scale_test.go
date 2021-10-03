@@ -127,14 +127,14 @@ func TestNote_Add(t *testing.T) {
 		Halfsteps    uint
 		ExpectedNote string
 	}{
-		{Name: "Add 0 halfsteps from A", StartNote: "A", Halfsteps: 0, ExpectedNote: "A"},
-		{Name: "Add 1 halfstep from A", StartNote: "A", Halfsteps: 1, ExpectedNote: "A#"},
-		{Name: "Add 2 halfsteps from A", StartNote: "A", Halfsteps: 2, ExpectedNote: "B"},
-		{Name: "Add 12 halfsteps from A", StartNote: "A", Halfsteps: 12, ExpectedNote: "A"},
-		{Name: "Add 13 halfsteps from A", StartNote: "A", Halfsteps: 13, ExpectedNote: "A#"},
-		{Name: "Add 1 halfstep from E", StartNote: "E", Halfsteps: 1, ExpectedNote: "F"},
-		{Name: "Add 5 halfsteps from E", StartNote: "E", Halfsteps: 5, ExpectedNote: "A"},
-		{Name: "Add 22 halfsteps from E", StartNote: "E", Halfsteps: 22, ExpectedNote: "D"},
+		{Name: "Add 0 semitones from A", StartNote: "A", Halfsteps: 0, ExpectedNote: "A"},
+		{Name: "Add 1 semitone from A", StartNote: "A", Halfsteps: 1, ExpectedNote: "A#"},
+		{Name: "Add 2 semitones from A", StartNote: "A", Halfsteps: 2, ExpectedNote: "B"},
+		{Name: "Add 12 semitones from A", StartNote: "A", Halfsteps: 12, ExpectedNote: "A"},
+		{Name: "Add 13 semitones from A", StartNote: "A", Halfsteps: 13, ExpectedNote: "A#"},
+		{Name: "Add 1 semitone from E", StartNote: "E", Halfsteps: 1, ExpectedNote: "F"},
+		{Name: "Add 5 semitones from E", StartNote: "E", Halfsteps: 5, ExpectedNote: "A"},
+		{Name: "Add 22 semitones from E", StartNote: "E", Halfsteps: 22, ExpectedNote: "D"},
 	}
 
 	for _, tt := range tests {

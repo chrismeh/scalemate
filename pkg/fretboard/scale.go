@@ -97,8 +97,8 @@ func (n Note) Equals(other Note) bool {
 	return n.value == other.value
 }
 
-func (n Note) Add(halfsteps uint) Note {
-	if halfsteps == 0 || halfsteps%12 == 0 {
+func (n Note) Add(semitones uint) Note {
+	if semitones == 0 || semitones%12 == 0 {
 		return n
 	}
 
@@ -110,7 +110,7 @@ func (n Note) Add(halfsteps uint) Note {
 		}
 	}
 
-	nextNoteIndex := currentNoteIndex + halfsteps
+	nextNoteIndex := currentNoteIndex + semitones
 	if int(nextNoteIndex) > 11 {
 		nextNoteIndex = nextNoteIndex % 12
 	}
