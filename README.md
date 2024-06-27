@@ -2,8 +2,6 @@
 
 A tool for generating images for guitar/bass scales.
 
-This app is running at [scalemate.cmeh.dev](https://scalemate.cmeh.dev).
-
 ## Usage (CLI)
 
 ```shell
